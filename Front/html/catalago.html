@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo - Biblioteca Paulo Freire</title>
+  
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css">
+  
+  <link rel="stylesheet" href="../css/catalago.css">
+</head>
+<body>
+
+  <div class="overlay" id="overlay" onclick="closeAllOverlays()"></div>
+
+  <!-- Sidebar com Filtros Incorporados -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="btn-close" onclick="toggleSidebar()">
+        <i class="fi fi-rr-cross"></i>
+      </button>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar-icon">
+        <i class="fi fi-sr-user"></i>
+      </div>
+      <div class="user-info">
+        <strong>Perfil Estudante</strong>
+        <span>RA Aluno: 2024001</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="home.html" class="nav-item">
+        <i class="fi fi-rr-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="perfilAluno.html" class="nav-item">
+        <i class="fi fi-rr-user"></i>
+        <span>Perfil</span>
+      </a>
+      <a href="historico.html" class="nav-item">
+        <i class="fi fi-rr-time-past"></i>
+        <span>Histórico de Livros</span>
+      </a>
+      <a href="catalogo.html" class="nav-item active">
+        <i class="fi fi-rr-book-alt"></i>
+        <span>Catálago de Livros</span>
+      </a>
+    </nav>
+
+    <!-- Seção de Filtros -->
+    <div class="filters-section">
+      <span class="filter-title-main">FILTROS</span>
+
+      <div class="filter-group">
+        <label class="filter-label">Categoria</label>
+        <label class="checkbox-container">
+          <input type="checkbox" value="ficcao" onchange="filterBooks()">
+          <span class="checkmark"></span>
+          Ficção (124)
+        </label>
+        <label class="checkbox-container">
+          <input type="checkbox" value="design" onchange="filterBooks()">
+          <span class="checkmark"></span>
+          Acadêmico (342)
+        </label>
+        <label class="checkbox-container">
+          <input type="checkbox" value="misterio" onchange="filterBooks()">
+          <span class="checkmark"></span>
+          Suspense (89)
+        </label>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Livros Disponíveis</label>
+        <select class="select-filter" id="subjectSelect" onchange="filterBooks()">
+          <option value="todos">Todos os Livros</option>
+          <option value="ficcao">Ficção</option>
+          <option value="design">Design / UX / Acadêmico</option>
+          <option value="misterio">Mistério / Suspense</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label class="filter-label">Disponibilidade</label>
+        <label class="checkbox-container">
+          <input type="checkbox" value="disponivel" onchange="filterBooks()">
+          <span class="checkmark"></span>
+          Disponível
+        </label>
+        <label class="checkbox-container">
+          <input type="checkbox" value="emprestado" onchange="filterBooks()">
+          <span class="checkmark"></span>
+          Emprestados
+        </label>
+        <label class="checkbox-container">
+          <input type="checkbox" value="atrasado" onchange="filterBooks()">
+          <span class="checkmark"></span>
+          Atrasados
+        </label>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Navbar -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="btn-menu" onclick="toggleSidebar()">
+        <i class="fi fi-rr-menu-burger"></i>
+      </button>
+    </div>
+    <div class="nav-right">
+      <span class="brand">Biblioteca Paulo Freire</span>
+      <span class="divider">|</span>
+      <a href="login.html" class="link-logout">SAIR</a>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <section class="top-section">
+      <h1>Catálogo de Livros</h1>
+      <div class="search-and-notify">
+        <div class="search-box">
+          <i class="fi fi-rr-search"></i>
+          <input type="text" id="searchInput" placeholder="Pesquise por livro, autores, ISBN..." onkeyup="filterBooks()">
+        </div>
+        <button class="btn-notification" onclick="openModal('modalNotifications')">
+          <i class="fi fi-rr-bell"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Grid de Livros -->
+    <section class="books-grid" id="booksGrid">
+      
+      <!-- PÁGINA 1 -->
+      <article class="book-card clickable" data-page="1" data-status="emprestado" data-category="ficcao" onclick="goToBook('harry-potter')">
+        <div class="cover-wrapper">
+          <span class="badge badge-borrowed">• Emprestado</span>
+          <img src="https://m.media-amazon.com/images/I/81S88mY0eaL._AC_UF1000,1000_QL80_.jpg" alt="Harry Potter">
+        </div>
+        <h3>Harry Potter e o Cálice de fogo</h3>
+        <p class="author">J.K Rowling</p>
+        <div class="tags"><span class="tag">Ficção</span></div>
+      </article>
+
+      <article class="book-card clickable" data-page="1" data-status="disponivel" data-category="design" onclick="goToBook('ux-design')">
+        <div class="cover-wrapper">
+          <span class="badge badge-available">• Disponível</span>
+          <img src="https://m.media-amazon.com/images/I/6113p03+Y6L._AC_UF1000,1000_QL80_.jpg" alt="UX Design">
+        </div>
+        <h3>UX Desing</h3>
+        <p class="author">Will Grant</p>
+        <div class="tags">
+          <span class="tag">Desing</span>
+          <span class="tag">UX</span>
+          <span class="tag">Acadêmico</span>
+        </div>
+      </article>
+
+      <article class="book-card clickable" data-page="1" data-status="disponivel" data-category="misterio" onclick="goToBook('um-de-nos-esta-mentindo')">
+        <div class="cover-wrapper">
+          <span class="badge badge-available">• Disponível</span>
+          <img src="https://m.media-amazon.com/images/I/71N15Eit3ML._AC_UF1000,1000_QL80_.jpg" alt="Um de nós está mentindo">
+        </div>
+        <h3>Um de nós está mentindo</h3>
+        <p class="author">Karen McManus</p>
+        <div class="tags">
+          <span class="tag">Mistério</span>
+          <span class="tag">Suspense</span>
+        </div>
+      </article>
+
+      <article class="book-card clickable" data-page="1" data-status="disponivel" data-category="design" onclick="goToBook('logica-programacao')">
+        <div class="cover-wrapper">
+          <span class="badge badge-available">• Disponível</span>
+          <img src="https://m.media-amazon.com/images/I/71+y-f3IOfL._AC_UF1000,1000_QL80_.jpg" alt="Lógica de programação">
+        </div>
+        <h3>Lógica de programação...</h3>
+        <p class="author">Raphael R</p>
+        <div class="tags">
+          <span class="tag">Desing</span>
+          <span class="tag">UX</span>
+          <span class="tag">Acadêmico</span>
+        </div>
+      </article>
+
+      <article class="book-card clickable" data-page="1" data-status="emprestado" data-category="ficcao" onclick="goToBook('manual-de-assassinato')">
+        <div class="cover-wrapper">
+          <span class="badge badge-borrowed">• Emprestado</span>
+          <img src="https://m.media-amazon.com/images/I/81180N97m0L._AC_UF1000,1000_QL80_.jpg" alt="Manual de assassinato">
+        </div>
+        <h3>Manual de assassinato...</h3>
+        <p class="author">J.K Rowling</p>
+        <div class="tags"><span class="tag">Ficção</span></div>
+      </article>
+
+      <article class="book-card clickable" data-page="1" data-status="emprestado" data-category="ficcao" onclick="goToBook('harry-potter')">
+        <div class="cover-wrapper">
+          <span class="badge badge-borrowed">• Emprestado</span>
+          <img src="https://m.media-amazon.com/images/I/81S88mY0eaL._AC_UF1000,1000_QL80_.jpg" alt="Harry Potter">
+        </div>
+        <h3>Harry Potter e o Cálice de fogo</h3>
+        <p class="author">J.K Rowling</p>
+        <div class="tags"><span class="tag">Ficção</span></div>
+      </article>
+
+      <article class="book-card clickable" data-page="1" data-status="disponivel" data-category="design" onclick="goToBook('ux-design')">
+        <div class="cover-wrapper">
+          <span class="badge badge-available">• Disponível</span>
+          <img src="https://m.media-amazon.com/images/I/6113p03+Y6L._AC_UF1000,1000_QL80_.jpg" alt="UX Design">
+        </div>
+        <h3>UX Desing</h3>
+        <p class="author">Will Grant</p>
+        <div class="tags">
+          <span class="tag">Desing</span>
+          <span class="tag">UX</span>
+          <span class="tag">Acadêmico</span>
+        </div>
+      </article>
+
+      <article class="book-card clickable" data-page="1" data-status="disponivel" data-category="misterio" onclick="goToBook('um-de-nos-esta-mentindo')">
+        <div class="cover-wrapper">
+          <span class="badge badge-available">• Disponível</span>
+          <img src="https://m.media-amazon.com/images/I/71N15Eit3ML._AC_UF1000,1000_QL80_.jpg" alt="Um de nós está mentindo">
+        </div>
+        <h3>Um de nós está mentindo</h3>
+        <p class="author">Karen McManus</p>
+        <div class="tags">
+          <span class="tag">Mistério</span>
+          <span class="tag">Suspense</span>
+        </div>
+      </article>
+
+      <article class="book-card clickable" data-page="1" data-status="disponivel" data-category="design" onclick="goToBook('logica-programacao')">
+        <div class="cover-wrapper">
+          <span class="badge badge-available">• Disponível</span>
+          <img src="https://m.media-amazon.com/images/I/71+y-f3IOfL._AC_UF1000,1000_QL80_.jpg" alt="Lógica de programação">
+        </div>
+        <h3>Lógica de programação...</h3>
+        <p class="author">Raphael R</p>
+        <div class="tags">
+          <span class="tag">Desing</span>
+          <span class="tag">UX</span>
+          <span class="tag">Acadêmico</span>
+        </div>
+      </article>
+
+      <article class="book-card clickable" data-page="1" data-status="emprestado" data-category="ficcao" onclick="goToBook('manual-de-assassinato')">
+        <div class="cover-wrapper">
+          <span class="badge badge-borrowed">• Emprestado</span>
+          <img src="https://m.media-amazon.com/images/I/81180N97m0L._AC_UF1000,1000_QL80_.jpg" alt="Manual de assassinato">
+        </div>
+        <h3>Manual de assassinato...</h3>
+        <p class="author">J.K Rowling</p>
+        <div class="tags"><span class="tag">Ficção</span></div>
+      </article>
+
+      <!-- PÁGINA 2 -->
+      <article class="book-card clickable" data-page="2" data-status="disponivel" data-category="design" onclick="goToBook('ux-design')">
+        <div class="cover-wrapper">
+          <span class="badge badge-available">• Disponível</span>
+          <img src="https://m.media-amazon.com/images/I/6113p03+Y6L._AC_UF1000,1000_QL80_.jpg" alt="UX Design">
+        </div>
+        <h3>UX Desing - Avançado</h3>
+        <p class="author">Will Grant</p>
+        <div class="tags">
+          <span class="tag">Desing</span>
+          <span class="tag">UX</span>
+        </div>
+      </article>
+
+      <article class="book-card clickable" data-page="2" data-status="emprestado" data-category="misterio" onclick="goToBook('um-de-nos-esta-mentindo')">
+        <div class="cover-wrapper">
+          <span class="badge badge-borrowed">• Emprestado</span>
+          <img src="https://m.media-amazon.com/images/I/71N15Eit3ML._AC_UF1000,1000_QL80_.jpg" alt="Um de nós está mentindo">
+        </div>
+        <h3>Um de nós é o próximo</h3>
+        <p class="author">Karen McManus</p>
+        <div class="tags">
+          <span class="tag">Mistério</span>
+        </div>
+      </article>
+
+      <article class="book-card clickable" data-page="2" data-status="disponivel" data-category="ficcao" onclick="goToBook('harry-potter')">
+        <div class="cover-wrapper">
+          <span class="badge badge-available">• Disponível</span>
+          <img src="https://m.media-amazon.com/images/I/81S88mY0eaL._AC_UF1000,1000_QL80_.jpg" alt="Harry Potter">
+        </div>
+        <h3>Harry Potter e a Ordem da Fênix</h3>
+        <p class="author">J.K Rowling</p>
+        <div class="tags"><span class="tag">Ficção</span></div>
+      </article>
+
+      <!-- PÁGINA 3 -->
+      <article class="book-card clickable" data-page="3" data-status="disponivel" data-category="design" onclick="goToBook('logica-programacao')">
+        <div class="cover-wrapper">
+          <span class="badge badge-available">• Disponível</span>
+          <img src="https://m.media-amazon.com/images/I/71+y-f3IOfL._AC_UF1000,1000_QL80_.jpg" alt="Lógica de programação">
+        </div>
+        <h3>Algoritmos e Estrutura de Dados</h3>
+        <p class="author">Raphael R</p>
+        <div class="tags">
+          <span class="tag">Acadêmico</span>
+        </div>
+      </article>
+
+      <article class="book-card clickable" data-page="3" data-status="disponivel" data-category="ficcao" onclick="goToBook('manual-de-assassinato')">
+        <div class="cover-wrapper">
+          <span class="badge badge-available">• Disponível</span>
+          <img src="https://m.media-amazon.com/images/I/81180N97m0L._AC_UF1000,1000_QL80_.jpg" alt="Boa Garota, Segredo Mortal">
+        </div>
+        <h3>Boa Garota, Segredo Mortal</h3>
+        <p class="author">Holly Jackson</p>
+        <div class="tags"><span class="tag">Ficção</span></div>
+      </article>
+
+    </section>
+
+    <!-- Paginação -->
+    <div class="pagination">
+      <button class="page-btn page-nav" onclick="changePage('prev')">Anterior</button>
+      <button class="page-btn page-num active" onclick="setPage(this)">1</button>
+      <button class="page-btn page-num" onclick="setPage(this)">2</button>
+      <button class="page-btn page-num" onclick="setPage(this)">3</button>
+      <span class="dots">...</span>
+      <button class="page-btn page-nav" onclick="changePage('next')">Próximo</button>
+    </div>
+  </main>
+
+  <!-- MODAL DE NOTIFICAÇÕES -->
+  <div class="modal" id="modalNotifications">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fi fi-rr-bell"></i> Notificações</h3>
+        <button class="btn-modal-close" onclick="closeModal('modalNotifications')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <ul class="notif-list">
+          <li>
+            <strong>Devolução próxima:</strong> O livro <em>Harry Potter e o Cálice de fogo</em> deve ser devolvido até 15/09/2026.
+          </li>
+          <li>
+            <strong>Renovação solicitada:</strong> O pedido de renovação para <em>Manual de assassinato para boas garotas</em> está sob análise.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script src="../javaScripit/scriptCatalago.js"></script>
+</body>
+</html>

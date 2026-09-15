@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Histórico de Empréstimos - Biblioteca Paulo Freire</title>
+  
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css">
+  
+  <link rel="stylesheet" href="../css/historico.css">
+</head>
+<body>
+
+  <!-- Overlay para o Menu Lateral -->
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Menu Lateral (Sidebar) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="btn-close" onclick="toggleSidebar()">
+        <i class="fi fi-rr-cross"></i>
+      </button>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar-icon">
+        <i class="fi fi-sr-user"></i>
+      </div>
+      <div class="user-info">
+        <strong>Perfil Estudante</strong>
+        <span>RA Aluno: 2024001</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="home.html" class="nav-item">
+        <i class="fi fi-rr-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="perfilAluno.html" class="nav-item">
+        <i class="fi fi-rr-user"></i>
+        <span>Perfil</span>
+      </a>
+      <a href="historico.html" class="nav-item active">
+        <i class="fi fi-rr-time-past"></i>
+        <span>Histórico de Livros</span>
+      </a>
+      <a href="catalago.html" class="nav-item">
+        <i class="fi fi-rr-book-alt"></i>
+        <span>Catálago de Livros</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Navbar Superior -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="btn-menu" onclick="toggleSidebar()">
+        <i class="fi fi-rr-menu-burger"></i>
+      </button>
+    </div>
+    <div class="nav-right">
+      <span class="brand">Biblioteca Paulo Freire</span>
+      <span class="divider">|</span>
+      <a href="index.html" class="link-logout">SAIR</a>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
+    
+    <!-- Quadrados de Estatísticas (Cards) -->
+    <section class="stats-section">
+      
+      <!-- Card 1: Total -->
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">
+            <i class="fi fi-rr-book-alt"></i>
+            <span>Total de Livros</span>
+          </div>
+          <div class="circle-bg circle-gray"></div>
+        </div>
+        <div class="stat-body">
+          <span class="stat-number" id="totalBooks">50</span>
+          <span class="stat-sub">Livros até o momento</span>
+        </div>
+      </div>
+
+      <!-- Card 2: Limite -->
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title">
+            <i class="fi fi-rr-bookmark"></i>
+            <span>Limite de empréstimos</span>
+          </div>
+          <div class="circle-bg circle-green"></div>
+        </div>
+        <div class="stat-body">
+          <div class="limit-info">
+            <span class="stat-number" id="borrowedLimit">4</span>
+            <span class="limit-sub">livros</span>
+          </div>
+          <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBar" style="width: 40%;"></div>
+          </div>
+          <span class="max-info">Máx. 10</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Atrasados -->
+      <div class="stat-card">
+        <div class="stat-header">
+          <div class="stat-title title-alert">
+            <i class="fi fi-rr-exclamation"></i>
+            <span>Livros atrasados</span>
+          </div>
+          <div class="circle-bg circle-red"></div>
+        </div>
+        <div class="stat-body">
+          <span class="stat-number number-alert" id="lateBooks">2</span>
+          <span class="stat-sub sub-alert">Livros em atraso</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Barra de Filtros por Aba e Pesquisa -->
+    <section class="filter-bar">
+      <div class="tab-buttons">
+        <button class="tab-btn active" onclick="filterTab('todos', this)">Todos os livros</button>
+        <button class="tab-btn" onclick="filterTab('emprestado', this)">Livros emprestados</button>
+        <button class="tab-btn" onclick="filterTab('devolvido', this)">Devolvidos</button>
+      </div>
+
+      <div class="search-box">
+        <i class="fi fi-rr-search"></i>
+        <input type="text" id="searchInput" placeholder="Buscar por livros ou autores" onkeyup="filterSearch()">
+      </div>
+    </section>
+
+    <!-- Lista de Livros no Histórico -->
+    <section class="history-list" id="historyList">
+      
+      <!-- Item 1: Atrasado -->
+      <article class="history-card status-atrasado" data-status="emprestado" data-late="true">
+        <div class="card-left-border red-border"></div>
+        <img src="https://m.media-amazon.com/images/I/6113p03+Y6L._AC_UF1000,1000_QL80_.jpg" alt="O Design do Dia a Dia" class="book-cover">
+        
+        <div class="book-details">
+          <span class="badge badge-late">• Com 2 dias de atraso</span>
+          <h3 class="book-title">O Design do Dia a Dia</h3>
+          <p class="book-author">Don Norman</p>
+          
+          <div class="dates-row">
+            <div>
+              <span class="date-label">Emprestado</span>
+              <span class="date-value">Oct 12, 2023</span>
+            </div>
+            <div>
+              <span class="date-label">Data de devolução</span>
+              <span class="date-value date-red">Nov 12, 2023</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-action">
+          <a href="renovacao.html?id=design-dia-a-dia" class="btn-action btn-renovar">Renovar</a>
+        </div>
+      </article>
+
+      <!-- Item 2: Emprestado -->
+      <article class="history-card" data-status="emprestado" data-late="false">
+        <img src="https://m.media-amazon.com/images/I/6113p03+Y6L._AC_UF1000,1000_QL80_.jpg" alt="Rápido e Devagar" class="book-cover">
+        
+        <div class="book-details">
+          <span class="badge badge-borrowed">• Emprestado</span>
+          <h3 class="book-title">Rápido e Devagar: Duas Formas de Pensar</h3>
+          <p class="book-author">Daniel Kahneman</p>
+          
+          <div class="dates-row">
+            <div>
+              <span class="date-label">Emprestado</span>
+              <span class="date-value">Oct 28, 2023</span>
+            </div>
+            <div>
+              <span class="date-label">Data de devolução</span>
+              <span class="date-value">Nov 28, 2023</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-action">
+          <a href="renovacao.html?id=rapido-e-devagar" class="btn-action btn-renovar">Renovar</a>
+        </div>
+      </article>
+
+      <!-- Item 3: Devolvido -->
+      <article class="history-card" data-status="devolvido" data-late="false">
+        <img src="https://m.media-amazon.com/images/I/71N15Eit3ML._AC_UF1000,1000_QL80_.jpg" alt="Sapiens" class="book-cover">
+        
+        <div class="book-details">
+          <span class="badge badge-returned"><i class="fi fi-rr-refresh"></i> Devolvido</span>
+          <h3 class="book-title">Sapiens: Uma Breve História da Humanidade</h3>
+          <p class="book-author">Yuval Noah Harari</p>
+          
+          <div class="dates-row">
+            <div>
+              <span class="date-label">Emprestado</span>
+              <span class="date-value">Sep 01, 2023</span>
+            </div>
+            <div>
+              <span class="date-label">Data de devolução</span>
+              <span class="date-value">Oct 02, 2023</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-action">
+          <button class="btn-text-action" onclick="borrowAgain('sapiens')">Pegar novamente</button>
+        </div>
+      </article>
+
+      <!-- Item 4: Extra (Devolvido) -->
+      <article class="history-card extra-item" data-status="devolvido" data-late="false">
+        <img src="https://m.media-amazon.com/images/I/81180N97m0L._AC_UF1000,1000_QL80_.jpg" alt="Jantar Secreto" class="book-cover">
+        
+        <div class="book-details">
+          <span class="badge badge-returned"><i class="fi fi-rr-refresh"></i> Devolvido</span>
+          <h3 class="book-title">Jantar Secreto</h3>
+          <p class="book-author">Raphael Montes</p>
+          
+          <div class="dates-row">
+            <div>
+              <span class="date-label">Emprestado</span>
+              <span class="date-value">Sep 01, 2023</span>
+            </div>
+            <div>
+              <span class="date-label">Data de devolução</span>
+              <span class="date-value">Oct 02, 2023</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-action">
+          <button class="btn-text-action" onclick="borrowAgain('jantar-secreto')">Pegar novamente</button>
+        </div>
+      </article>
+
+      <!-- Item 5: Extra (Devolvido) -->
+      <article class="history-card extra-item" data-status="devolvido" data-late="false">
+        <img src="https://m.media-amazon.com/images/I/71+y-f3IOfL._AC_UF1000,1000_QL80_.jpg" alt="O Massacre da Família Hope" class="book-cover">
+        
+        <div class="book-details">
+          <span class="badge badge-returned"><i class="fi fi-rr-refresh"></i> Devolvido</span>
+          <h3 class="book-title">O Massacre da Família Hope</h3>
+          <p class="book-author">Riley Sager</p>
+          
+          <div class="dates-row">
+            <div>
+              <span class="date-label">Emprestado</span>
+              <span class="date-value">Sep 01, 2023</span>
+            </div>
+            <div>
+              <span class="date-label">Data de devolução</span>
+              <span class="date-value">Oct 02, 2023</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-action">
+          <button class="btn-text-action" onclick="borrowAgain('massacre-familia-hope')">Pegar novamente</button>
+        </div>
+      </article>
+
+    </section>
+
+    <!-- Botão Ver Mais -->
+    <div class="see-more-container" id="seeMoreContainer">
+      <button class="btn-see-more" onclick="showAllBooks()">Ver mais ...</button>
+    </div>
+
+  </main>
+
+  <script src="../javaScripit/scriptHistorico.js"></script>
+</body>
+</html>

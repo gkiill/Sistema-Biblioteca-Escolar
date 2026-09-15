@@ -1,0 +1,287 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: #fcfbf7;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.navbar {
+  background-color: #03254c;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+}
+
+.brand {
+  font-family: Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.nav-right {
+  font-size: 0.85rem;
+  color: #ccc;
+}
+
+.link-login {
+  color: white;
+  font-weight: bold;
+  text-decoration: none;
+  margin-left: 6px;
+}
+
+.container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 20px;
+}
+
+.card {
+  background: #ffffff;
+  border: 1px solid #d0d7de;
+  border-radius: 20px;
+  display: flex;
+  width: 100%;
+  max-width: 960px;
+  min-height: 520px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.04);
+}
+
+/* Painel Esquerdo */
+.info-panel {
+  background-color: #dce5ef;
+  width: 42%;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.info-panel h2 {
+  font-family: Georgia, serif;
+  color: #03254c;
+  font-size: 2rem;
+  line-height: 1.1;
+  margin-bottom: 16px;
+}
+
+.subtitle {
+  color: #4a5568;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin-bottom: 30px;
+}
+
+.features {
+  list-style: none;
+}
+
+.features li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+/* Estilização dos ícones do Flaticon */
+.features .icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+}
+
+.features .icon i {
+  font-size: 1.4rem;
+  color: #03254c;
+  display: flex;
+  align-items: center;
+}
+
+.features strong {
+  display: block;
+  font-size: 0.85rem;
+  color: #1a202c;
+}
+
+.features p {
+  font-size: 0.75rem;
+  color: #718096;
+}
+
+.support-link {
+  font-size: 0.75rem;
+  color: #4a5568;
+  text-decoration: underline;
+}
+
+/* Painel Direito */
+.form-panel {
+  width: 58%;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
+.form-header h3 {
+  font-family: Georgia, serif;
+  font-size: 1.4rem;
+  color: #1a202c;
+}
+
+.form-header p {
+  font-size: 0.8rem;
+  color: #718096;
+  margin-bottom: 24px;
+}
+
+.label-title {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 8px;
+}
+
+.role-selector {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.role-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background-color: #f8fafc;
+  cursor: pointer;
+  color: #4a5568;
+  transition: all 0.2s ease;
+}
+
+.role-btn:hover {
+  border-color: #cbd5e1;
+}
+
+.role-btn.active {
+  border-color: #03254c;
+  background-color: #f1f5f9;
+  color: #03254c;
+  font-weight: 600;
+}
+
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.register-form.hidden {
+  display: none;
+}
+
+.form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-row .input-group {
+  flex: 1;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-group label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 6px;
+}
+
+.input-group input {
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  background-color: #f8fafc;
+  font-size: 0.85rem;
+  outline: none;
+}
+
+.input-group input:focus {
+  border-color: #03254c;
+}
+
+.hint {
+  font-size: 0.7rem;
+  color: #a0aec0;
+  margin-top: 4px;
+}
+
+.btn-submit {
+  background-color: #023836;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 20px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  transition: background 0.2s;
+}
+
+.btn-submit:hover {
+  background-color: #012826;
+}
+
+.terms-text {
+  font-size: 0.7rem;
+  color: #718096;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.terms-text a {
+  color: #2d3748;
+  font-weight: 600;
+}
+
+/* Responsividade */
+@media (max-width: 850px) {
+  .card {
+    flex-direction: column;
+  }
+  .info-panel, .form-panel {
+    width: 100%;
+  }
+  .info-panel {
+    padding: 24px;
+  }
+}
+
+@media (max-width: 500px) {
+  .form-row {
+    flex-direction: column;
+  }
+}

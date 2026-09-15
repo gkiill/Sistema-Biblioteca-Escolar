@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Início - Biblioteca Paulo Freire</title>
+  
+  <!-- CDN do Flaticon / UIcons -->
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-straight/css/uicons-regular-straight.css">
+  
+  <link rel="stylesheet" href="../css/home.css">
+</head>
+<body>
+
+  <!-- Overlay para escurecer o fundo quando o menu ou modal estiver aberto -->
+  <div class="overlay" id="overlay" onclick="closeAllOverlays()"></div>
+
+  <!-- Menu Lateral (Sidebar) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="btn-close" onclick="toggleSidebar()">
+        <i class="fi fi-rr-cross"></i>
+      </button>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar-icon">
+        <i class="fi fi-sr-user"></i>
+      </div>
+      <div class="user-info">
+        <strong>Perfil Estudante</strong>
+        <span>RA Aluno: 2024001</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="home.html" class="nav-item active">
+        <i class="fi fi-rr-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="perfilAluno.html" class="nav-item">
+        <i class="fi fi-rr-user"></i>
+        <span>Perfil</span>
+      </a>
+      <a href="historico.html" class="nav-item">
+        <i class="fi fi-rr-time-past"></i>
+        <span>Histórico de Livros</span>
+      </a>
+      <a href="catalago.html" class="nav-item">
+        <i class="fi fi-rr-book-alt"></i>
+        <span>Catálago de livros</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Navbar Superior -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="btn-menu" onclick="toggleSidebar()">
+        <i class="fi fi-rr-menu-burger"></i>
+      </button>
+    </div>
+    <div class="nav-right">
+      <span class="brand">Biblioteca Paulo Freire</span>
+      <span class="divider">|</span>
+      <a href="login.html" class="link-logout">SAIR</a>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
+    
+    <!-- Cabeçalho e Busca -->
+    <section class="top-section">
+      <h1>Descubra novos livros</h1>
+      <div class="search-and-notify">
+        <div class="search-box">
+          <i class="fi fi-rr-search"></i>
+          <input type="text" id="searchInput" placeholder="Pesquise por livro, autores, ISBN..." onkeyup="filterBooks()">
+        </div>
+        <button class="btn-notification" onclick="openModal('modalNotifications')">
+          <i class="fi fi-rr-bell"></i>
+        </button>
+      </div>
+    </section>
+
+    <!-- Carrossel / Grade de Livros -->
+    <section class="books-section">
+      <div class="section-header">
+        <h2>Recomendações para você</h2>
+        <a href="catalago.html" class="link-more">Ver mais &rsaquo;</a>
+      </div>
+
+      <div class="books-grid" id="booksGrid">
+        
+        <!-- Card 1 -->
+        <article class="book-card" onclick="goToBook('harry-potter')">
+          <div class="cover-wrapper">
+            <span class="badge badge-borrowed">• Emprestado</span>
+            <img src="https://m.media-amazon.com/images/I/81S88mY0eaL._AC_UF1000,1000_QL80_.jpg" alt="Harry Potter e o Cálice de Fogo">
+          </div>
+          <h3>Harry Potter e o Cálice de fogo</h3>
+          <p class="author">J.K Rowling</p>
+          <div class="tags">
+            <span class="tag">Ficção</span>
+          </div>
+        </article>
+
+        <!-- Card 2 -->
+        <article class="book-card" onclick="goToBook('ux-design')">
+          <div class="cover-wrapper">
+            <span class="badge badge-available">• Disponível</span>
+            <img src="https://m.media-amazon.com/images/I/6113p03+Y6L._AC_UF1000,1000_QL80_.jpg" alt="UX Design">
+          </div>
+          <h3>UX Desing</h3>
+          <p class="author">Will Grant</p>
+          <div class="tags">
+            <span class="tag">Desing</span>
+            <span class="tag">UX</span>
+            <span class="tag">Acadêmico</span>
+          </div>
+        </article>
+
+        <!-- Card 3 -->
+        <article class="book-card" onclick="goToBook('um-de-nos-esta-mentindo')">
+          <div class="cover-wrapper">
+            <span class="badge badge-available">• Disponível</span>
+            <img src="https://m.media-amazon.com/images/I/71N15Eit3ML._AC_UF1000,1000_QL80_.jpg" alt="Um de nós está mentindo">
+          </div>
+          <h3>Um de nós está mentindo</h3>
+          <p class="author">Karen McManus</p>
+          <div class="tags">
+            <span class="tag">Mistério</span>
+            <span class="tag">Suspense</span>
+          </div>
+        </article>
+
+        <!-- Card 4 -->
+        <article class="book-card" onclick="goToBook('logica-programacao')">
+          <div class="cover-wrapper">
+            <span class="badge badge-available">• Disponível</span>
+            <img src="https://m.media-amazon.com/images/I/71+y-f3IOfL._AC_UF1000,1000_QL80_.jpg" alt="Lógica de programação">
+          </div>
+          <h3>Lógica de programação...</h3>
+          <p class="author">Raphael R</p>
+          <div class="tags">
+            <span class="tag">Desing</span>
+            <span class="tag">UX</span>
+            <span class="tag">Acadêmico</span>
+          </div>
+        </article>
+
+        <!-- Card 5 -->
+        <article class="book-card" onclick="goToBook('manual-de-assassinato')">
+          <div class="cover-wrapper">
+            <span class="badge badge-borrowed">• Emprestado</span>
+            <img src="https://m.media-amazon.com/images/I/81180N97m0L._AC_UF1000,1000_QL80_.jpg" alt="Manual de assassinato para boas garotas">
+          </div>
+          <h3>Manual de assassinato...</h3>
+          <p class="author">Holly Jackson</p>
+          <div class="tags">
+            <span class="tag">Ficção</span>
+          </div>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- Cards de Atalho / Informações -->
+    <section class="info-cards-section">
+      
+      <div class="info-card">
+        <div class="card-icon-wrapper">
+          <i class="fi fi-rs-calendar-day"></i>
+        </div>
+        <div class="card-body">
+          <h3>Datas de devoluções</h3>
+          <p>Saiba quando você precisa fazer a devolução dos seus livros</p>
+        </div>
+        <div class="card-footer">
+          <span class="date-info">Hoje é 02/09/2026</span>
+          <button type="button" class="btn-action" onclick="openModal('modalDates')">Ver datas</button>
+        </div>
+      </div>
+
+      <div class="info-card">
+        <div class="card-icon-wrapper">
+          <i class="fi fi-rs-book-bookmark"></i>
+        </div>
+        <div class="card-body">
+          <h3>Como renovar seus livros?</h3>
+          <p>Saiba como fazer a renovação dos seus livros que precisam de mais tempo para ler.</p>
+        </div>
+        <div class="card-footer">
+          <button type="button" class="btn-action" onclick="openModal('modalRenewInfo')">Ver informações</button>
+        </div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- MODAIS -->
+
+  <!-- Modal 1: Notificações -->
+  <div class="modal" id="modalNotifications">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fi fi-rr-bell"></i> Notificações</h3>
+        <button class="btn-modal-close" onclick="closeModal('modalNotifications')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <ul class="notif-list">
+          <li>
+            <strong>Devolução próxima:</strong> O livro <em>Harry Potter e o Cálice de fogo</em> deve ser devolvido até 15/09/2026.
+          </li>
+          <li>
+            <strong>Renovação solicitada:</strong> O pedido de renovação para <em>Manual de assassinato para boas garotas</em> está sob análise.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 2: Datas de Devoluções -->
+  <div class="modal" id="modalDates">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fi fi-rs-calendar-day"></i> Datas de Devolução</h3>
+        <button class="btn-modal-close" onclick="closeModal('modalDates')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="calendar-preview">
+          <p class="calendar-month">Setembro 2026</p>
+          <div class="calendar-grid">
+            <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+            <span class="empty"></span><span class="empty"></span><span>1</span><span class="today">2</span><span>3</span><span>4</span><span>5</span>
+            <span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span>
+            <span>13</span><span>14</span><span class="due-date">15</span><span>16</span><span>17</span><span>18</span><span>19</span>
+            <span class="due-date">20</span><span>21</span><span>22</span><span>23</span><span>24</span><span>25</span><span>26</span>
+            <span>27</span><span>28</span><span>29</span><span>30</span>
+          </div>
+        </div>
+        <div class="dates-details">
+          <h4>Livros emprestados:</h4>
+          <ul>
+            <li><strong>Harry Potter e o Cálice de fogo:</strong> 15/09/2026</li>
+            <li><strong>Manual de assassinato para boas garotas:</strong> 20/09/2026</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 3: Informações de Renovação -->
+  <div class="modal" id="modalRenewInfo">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fi fi-rs-book-bookmark"></i> Como renovar seus livros</h3>
+        <button class="btn-modal-close" onclick="closeModal('modalRenewInfo')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>Alunos e professores podem realizar a solicitação de renovação diretamente pelo sistema através de sua conta acadêmica.</p><br>
+        <p><strong>Atenção:</strong> Após realizar a solicitação digital, é obrigatório comparecer presencialmente à biblioteca munido do livro para validação final junto ao bibliotecário.</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="../javaScripit/scriptHome.js"></script>
+</body>
+</html>
