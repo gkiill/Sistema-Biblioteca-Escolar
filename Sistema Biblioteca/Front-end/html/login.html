@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - Biblioteca Paulo Freire</title>
+  <link rel="stylesheet" href="../css/login.css">
+</head>
+<body>
+  <main class="login-container">
+    <div class="login-card">
+      
+      <!-- Ícone e Título -->
+      <div class="header">
+        <svg class="logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+        </svg>
+        <h1>Biblioteca Paulo Freire</h1>
+        <p>Bem-vindo de volta a biblioteca virtual. Por favor faça seu login com seu acesso academico</p>
+      </div>
+
+      <!-- Formulário de Login -->
+      <form id="loginForm" class="login-form">
+        <div class="input-group">
+          <label for="email">Email or Student ID</label>
+          <input type="text" id="email" placeholder="Digite seu email educacional" required>
+        </div>
+
+        <div class="input-group">
+          <label for="password">Senha</label>
+          <input type="password" id="password" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="btn-submit">Entrar</button>
+      </form>
+
+      <!-- Link de Cadastro -->
+      <div class="footer">
+        <a href="cadastro.html">Não tem conta? Crie por aqui</a>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="../javaScripit/scriptLogin.js"></script>
+</body>
+</html>

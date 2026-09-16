@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Detalhes do Livro - Biblioteca Paulo Freire</title>
+  
+  <!-- Ícones do Flaticon -->
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  
+  <link rel="stylesheet" href="../css/pagLivro.css">
+</head>
+<body>
+
+  <!-- Overlay de fundo para quando o menu lateral abre -->
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Menu Lateral (Sidebar) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="btn-close" onclick="toggleSidebar()" aria-label="Fechar menu">
+        <i class="fi fi-rr-cross"></i>
+      </button>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar-icon">
+        <i class="fi fi-sr-user"></i>
+      </div>
+      <div class="user-info">
+        <strong>Perfil Estudante</strong>
+        <span>RA Aluno: 2024001</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="home.html" class="nav-item active">
+        <i class="fi fi-rr-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="perfilAluno.html" class="nav-item">
+        <i class="fi fi-rr-user"></i>
+        <span>Perfil</span>
+      </a>
+      <a href="historico.html" class="nav-item">
+        <i class="fi fi-rr-time-past"></i>
+        <span>Histórico de Empréstimo</span>
+      </a>
+      <a href="catalago.html" class="nav-item">
+        <i class="fi fi-rr-book-alt"></i>
+        <span>Catálago de Livros</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Navbar Superior -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="btn-menu" onclick="toggleSidebar()" aria-label="Abrir menu">
+        <i class="fi fi-rr-menu-burger"></i>
+      </button>
+    </div>
+    <div class="nav-right">
+      <span class="brand">Biblioteca Paulo Freire</span>
+      <span class="divider">|</span>
+      <a href="index.html" class="link-logout">SAIR</a>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
+    
+    <!-- Botão Voltar -->
+    <div class="top-actions">
+      <button class="btn-back" onclick="goBack()">
+        <div class="btn-back-icon">
+          <i class="fi fi-rr-arrow-left"></i>
+        </div>
+        <span>Voltar</span>
+      </button>
+    </div>
+
+    <!-- Grid do Livro -->
+    <div class="book-details-grid">
+      
+      <!-- Coluna Esquerda: Capa com Borda Pontoada -->
+      <div class="left-column">
+        <div class="cover-wrapper">
+          <img id="bookCover" src="" alt="Capa do Livro">
+        </div>
+      </div>
+
+      <!-- Coluna Direita: Formulários e Dados -->
+      <div class="right-column">
+        
+        <!-- Card: Informações Principais -->
+        <section class="card">
+          <h1 class="book-title" id="bookTitle">Carregando...</h1>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Autor(a)</label>
+              <input type="text" id="bookAuthor" readonly>
+            </div>
+            <div class="form-group">
+              <label>ISBN</label>
+              <input type="text" id="bookIsbn" readonly>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Editora</label>
+              <input type="text" id="bookPublisher" readonly>
+            </div>
+            <div class="form-group">
+              <label>Data de publicação</label>
+              <input type="text" id="bookPublicationDate" readonly>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card: Classificação -->
+        <section class="card">
+          <div class="card-title-group">
+            <i class="fi fi-rr-boxes"></i>
+            <h2>Classificação</h2>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Categoria principal</label>
+              <input type="text" id="bookCategory" readonly>
+            </div>
+
+            <div class="form-group">
+              <label>Tags</label>
+              <div class="tags-container" id="bookTags">
+                <!-- As tags serão geradas dinamicamente aqui pelo JS -->
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Card: Sinopse -->
+        <section class="card">
+          <div class="card-title-group">
+            <i class="fi fi-rr-document"></i>
+            <h2>Sinopse</h2>
+          </div>
+
+          <div class="synopsis-box">
+            <p id="bookSynopsis"></p>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </main>
+
+  <script src="../javaScripit/scriptPagLivro.js"></script>
+</body>
+</html>

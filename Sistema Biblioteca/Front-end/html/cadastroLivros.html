@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrar um Novo Livro - Biblioteca Paulo Freire</title>
+  
+  <!-- Ícones do Flaticon -->
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  
+  <link rel="stylesheet" href="../css/cadastroLivros.css">
+</head>
+<body>
+
+  <!-- Overlay para o Menu Lateral -->
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Menu Lateral (Sidebar) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="btn-close" onclick="toggleSidebar()">
+        <i class="fi fi-rr-cross"></i>
+      </button>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar-icon">
+        <i class="fi fi-sr-user"></i>
+      </div>
+      <div class="user-info">
+        <strong>Perfil Bibliotecário</strong>
+        <span>ID Funcionário: 2140008</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="homeADMIN.html" class="nav-item">
+        <i class="fi fi-rr-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="perfilBiblio.html" class="nav-item">
+        <i class="fi fi-rr-user"></i>
+        <span>Perfil</span>
+      </a>
+      <a href="cadastroLivros.html" class="nav-item active">
+        <i class="fi fi-sr-square-plus"></i>
+        <span>Registro de novos Livros</span>
+      </a>
+      <a href="emprestimo.html" class="nav-item">
+        <i class="fi fi-rr-calendar"></i>
+        <span>Área de Empréstimos</span>
+      </a>
+      <a href="inventario.html" class="nav-item">
+        <i class="fi fi-rr-box"></i>
+        <span>Inventário</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Navbar Superior -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="btn-menu" onclick="toggleSidebar()">
+        <i class="fi fi-rr-menu-burger"></i>
+      </button>
+    </div>
+    <div class="nav-right">
+      <span class="brand">Biblioteca Paulo Freire</span>
+      <span class="divider">|</span>
+      <a href="index.html" class="link-logout">SAIR</a>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
+    <header class="page-header">
+      <h1 class="page-title">Registrar um novo livro</h1>
+      <p class="page-subtitle">Pronto para adicionar novos livros à biblioteca?</p>
+    </header>
+
+    <form id="bookForm" onsubmit="handleFormSubmit(event)">
+      <div class="form-grid">
+        
+        <!-- Coluna da Esquerda: Upload e Ações -->
+        <div class="left-column">
+          <div class="card dropzone-card" id="dropzone" onclick="openCoverModal()">
+            <div class="dropzone-content" id="dropzoneContent">
+              <div class="upload-circle">
+                <i class="fi fi-rr-cloud-upload"></i>
+              </div>
+              <strong class="upload-title">Fazer upload da capa</strong>
+              <p class="upload-desc">Arraste e solte ou clique para procurar.<br>Tamanho recomendado: 600x900px</p>
+            </div>
+          </div>
+
+          <div class="action-box">
+            <button type="submit" class="btn-submit">
+              <i class="fi fi-rr-disk"></i> Salvar novo título
+            </button>
+            <button type="button" class="btn-cancel" onclick="resetForm()">Cancelar</button>
+          </div>
+        </div>
+
+        <!-- Coluna da Direita: Formulários -->
+        <div class="right-column">
+          
+          <!-- Card: Informações Principais -->
+          <section class="card">
+            <div class="card-title-group">
+              <i class="fi fi-rr-info"></i>
+              <h2>Informações principais</h2>
+            </div>
+
+            <div class="form-group full-width">
+              <label for="bookTitle">Título do livro</label>
+              <input type="text" id="bookTitle" placeholder="ex. The Great Gatsby" required>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="bookAuthor">Autor(a)</label>
+                <input type="text" id="bookAuthor" placeholder="ex. F. Scott Fitzgerald" required>
+              </div>
+              <div class="form-group">
+                <label for="bookIsbn">ISBN</label>
+                <input type="text" id="bookIsbn" placeholder="ex. 000-00-0000-0" maxlength="13" oninput="applyISBNMask(this)" required>
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label for="bookPublisher">Editora</label>
+                <input type="text" id="bookPublisher" placeholder="ex. Scribner" required>
+              </div>
+              <div class="form-group">
+                <label for="bookPublicationDate">Data de publicação</label>
+                <input type="date" id="bookPublicationDate" required>
+              </div>
+            </div>
+          </section>
+
+          <!-- Card: Classificação -->
+          <section class="card">
+            <div class="card-title-group">
+              <i class="fi fi-rr-boxes"></i>
+              <h2>Classificação</h2>
+            </div>
+
+            <div class="form-row">
+              <!-- Select/Search Interativo -->
+              <div class="form-group custom-select-group">
+                <label>Categoria principal</label>
+                <div class="select-box" onclick="toggleCategoryDropdown()">
+                  <input type="text" id="categoryInput" placeholder="Selecione ou digite a categoria" onkeyup="filterCategories()" autocomplete="off">
+                  <i class="fi fi-rr-angle-small-down"></i>
+                </div>
+                <ul class="dropdown-list" id="categoryList">
+                  <!-- Ficção -->
+                  <li class="dropdown-header">Ficção</li>
+                  <li onclick="selectCategory('Romance')">Romance</li>
+                  <li onclick="selectCategory('Novela')">Novela</li>
+                  <li onclick="selectCategory('Conto')">Conto</li>
+                  <li onclick="selectCategory('Crônica')">Crônica</li>
+                  
+                  <!-- Subgêneros -->
+                  <li class="dropdown-header">Subgêneros da Ficção</li>
+                  <li onclick="selectCategory('Fantasia')">Fantasia</li>
+                  <li onclick="selectCategory('Ficção Científica')">Ficção Científica</li>
+                  <li onclick="selectCategory('Suspense (Thriller)')">Suspense (Thriller)</li>
+                  <li onclick="selectCategory('Horror/Terror')">Horror/Terror</li>
+                  <li onclick="selectCategory('Romance de Época')">Romance de Época</li>
+                  <li onclick="selectCategory('Aventura')">Aventura</li>
+                  <li onclick="selectCategory('Ficção Policial')">Ficção Policial</li>
+
+                  <!-- Não Ficção -->
+                  <li class="dropdown-header">Não Ficção</li>
+                  <li onclick="selectCategory('Biografias, Autobiografias e Memórias')">Biografias, Autobiografias e Memórias</li>
+                  <li onclick="selectCategory('Divulgação Científica')">Divulgação Científica</li>
+                  <li onclick="selectCategory('Ensaios')">Ensaios</li>
+                  <li onclick="selectCategory('Livros Didáticos e Técnicos')">Livros Didáticos e Técnicos</li>
+                </ul>
+              </div>
+
+              <!-- Input de Tags -->
+              <div class="form-group">
+                <label>Tags</label>
+                <div class="tags-container" id="tagsContainer">
+                  <div class="tags-list" id="tagsList">
+                    <span class="tag">Clássico <button type="button" onclick="removeTag(this)">&times;</button></span>
+                  </div>
+                  <input type="text" id="tagInput" placeholder="Escreva e aperte do enter" onkeydown="addTag(event)">
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Card: Sinopse -->
+          <section class="card">
+            <div class="card-title-group">
+              <i class="fi fi-rr-document"></i>
+              <h2>Sinopse do Livro</h2>
+            </div>
+
+            <div class="form-group full-width">
+              <textarea id="bookSynopsis" rows="5" placeholder="Escreva a sinopse do livro ou um pequeno texto sobre o livro"></textarea>
+            </div>
+          </section>
+
+        </div>
+      </div>
+    </form>
+  </main>
+
+  <!-- MODAL: Upload da Capa -->
+  <div class="modal-overlay" id="modalCover">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Upload da Capa do Livro</h2>
+        <button type="button" class="btn-close-modal" onclick="closeCoverModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="file-upload-area">
+          <input type="file" id="coverFileInput" accept="image/*" onchange="previewCoverImage(event)">
+          <i class="fi fi-rr-cloud-upload"></i>
+          <p>Clique aqui para selecionar a imagem da capa</p>
+        </div>
+        <div class="preview-area" id="modalPreviewArea" style="display: none;">
+          <img id="coverPreviewImg" src="" alt="Prévia da Capa">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closeCoverModal()">Fechar</button>
+        <button type="button" class="btn-primary" onclick="confirmCoverUpload()">Salvar Capa</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- OVERLAY DE CARREGAMENTO / SUCESSO DO CADASTRO -->
+  <div class="modal-overlay" id="statusModal">
+    <div class="status-card-modal">
+      
+      <!-- Estado 1: Loading -->
+      <div id="statusLoading" class="status-state">
+        <div class="spinner"></div>
+        <p>Cadastrando novo livro...</p>
+      </div>
+
+      <!-- Estado 2: Sucesso -->
+      <div id="statusSuccess" class="status-state" style="display: none;">
+        <div class="success-circle">
+          <i class="fi fi-rr-check"></i>
+        </div>
+        <p class="success-msg">Cadastro do novo livro foi efetuado com sucesso!</p>
+        <button type="button" class="btn-primary" onclick="finishRegistration()">Concluir</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="../javaScripit/scriptCadastroLivros.js"></script>
+</body>
+</html>
