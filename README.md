@@ -1,117 +1,82 @@
 # Sistema de Gestão de Biblioteca Escolar
 
-Projeto desenvolvido para a disciplina de **Desenvolvimento Web II** — **FATEC**.  
+Projeto desenvolvido para a disciplina de Desenvolvimento Web II (FATEC).  
+Stack: PHP 8.3, Laravel 13, PostgreSQL 16, Nginx, Docker Compose.
 
 ---
 
-## 🎯 Status da 1ª Entrega (29/09) — 100% dos Requisitos Atendidos
+## O que foi implementado / feito
 
-| Requisito | Descrição | Status | Detalhes |
-|---|---|:---:|---|
-| **1. Ambiente Docker** | Ambiente de desenvolvimento local multi-container configurado e documentado | ✅ **Concluído** | Docker Compose com Nginx (Front), PHP 8.3 Laravel 13 (Back) e PostgreSQL 16 (DB) |
-| **2. Modelagem (DER)** | Modelagem do Banco de Dados relacional finalizada e normalizada | ✅ **Concluído** | 8 tabelas em 3NF documentadas com diagrama Mermaid em [DER.md](./DER.md) |
-| **3. CRUDs Eloquent** | CRUD com Eloquent funcional para as entidades primárias | ✅ **Concluído** | Operações completas para Livros, Autores, Categorias, Usuários e Empréstimos |
-| **4. Rotas e Controllers** | Rotas da API organizadas e Controllers padronizados | ✅ **Concluído** | Versionamento semântico sob o prefixo `/api/v1/...` com Form Requests e validações |
-| **5. Sessão e Cookies** | Controle de sessão e cookies com login e logout | ✅ **Concluído** | Autenticação stateful com cookies HTTP criptografados, sessão no PostgreSQL e CORS |
-| **6. API Pública de Livros**| Consumo de API pública de livros integrada ao projeto | ✅ **Concluído** | Pipeline resiliente (Google Books + Open Library + BrasilAPI) com busca por ISBN na interface |
+### 1. Carga e Acervo Real de Livros
+- Comando `php artisan biblioteca:importar-api --tudo` para importação direta da API pública da Open Library.
+- Cadastro e persistência de 230 livros reais no PostgreSQL com títulos, autores, sinopses, capas e categorias.
+- Definição de 4 exemplares por obra, totalizando 920 livros físicos no acervo.
+
+### 2. Catálogo de Livros (`catalago.html`)
+- Remoção do botão de busca em API externa na área pública, mantendo o catálogo restrito ao acervo interno da biblioteca.
+- Paginação dinâmica com elipses (`1 ... 14 15 16 ... 29`) para navegação entre os 230 registros.
+- Filtros por título, autor, categoria e status integrados diretamente com a API (`GET /api/v1/livros`).
+
+### 3. Cadastro e Autenticação de Usuários (`cadastro.html` e `login.html`)
+- Endpoint `POST /api/v1/register` para criação simultânea em `users` e `usuarios` com autenticação imediata de sessão.
+- Normalização de e-mail (minúsculas e sem espaços) e bloqueio de e-mails duplicados com mensagem em português.
+- Validação matemática de CPF (módulo 11) no backend e no frontend com máscara automática para professores.
+- Restrição numérica de até 12 dígitos para RA de alunos.
+- Caixa de feedback visual nativa no formulário (sem pop-ups do tipo `alert`).
+
+### 4. Banco de Dados e Perfil do Usuário (`perfilAluno.html`)
+- Migration adicionando as colunas `documento` e `departamento` na tabela `usuarios`.
+- Atualização dos models e rotas (`/register`, `/login`, `/me`) para persistir e devolver documento (RA/CPF) e departamento/curso.
+- Sincronização da tela de perfil para exibir nome, RA e curso reais do banco de dados em vez de dados estáticos.
+- Sincronização dos usuários de teste do seeder na tabela `users` para permitir login.
+
+### 5. Gestão de Estoque e Inventário (`inventario.html`)
+- Desacoplamento da lista fixa de 11 livros mocados.
+- Rota `GET /api/v1/inventario/metricas` retornando contagens reais do PostgreSQL (total de exemplares, títulos, livros disponíveis, emprestados e atrasados).
+- Cálculo dinâmico de disponibilidade de cada obra na tabela (`X de Y disponíveis` ou `Esgotado`).
+- Criação do script `scriptInventario.js` com categorias dinâmicas, busca com debounce e filtros integrados ao banco.
+
+### 6. Segurança e Ajustes no Repositório
+- Remoção de senhas expostas no `docker-compose.yml` usando variáveis de ambiente (`${DB_PASSWORD:-secret}`).
+- Atualização do arquivo `.env.example` com as configurações do PostgreSQL local.
+- Remoção do arquivo README padrão do Laravel da pasta `Back/`.
+- Aplicação de cache-busting (`?v=...`) nas chamadas de script das páginas HTML.
 
 ---
 
-## 🚀 Como Executar o Projeto
+## Como Executar o Projeto
 
-### Pré-requisitos
-* [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado e em execução.
-
-### 1. Subir os Containers
-Na raiz do repositório, execute:
+### 1. Iniciar os Containers
 ```bash
 docker compose up -d
 ```
 
-O Docker iniciará automaticamente 3 serviços isolados:
-* **`frontend` (Nginx Alpine)**: Servindo a interface na porta **`8080`**.
-* **`backend` (PHP 8.3 Alpine + Laravel 13)**: Servindo a API RESTful na porta **`8000`**.
-* **`db` (PostgreSQL 16 Alpine)**: Banco de dados relacional na porta **`5432`**.
-
-### 2. Executar as Migrations e Seeds
-Para criar a estrutura das tabelas e popular o banco com registros iniciais de teste:
+### 2. Rodar Migrations e Seeds
 ```bash
 docker compose exec backend php artisan migrate:fresh --seed
 ```
 
----
-
-## 🖥️ Acesso à Aplicação
-
-* **Tela de Login**: [http://localhost:8080/html/login.html](http://localhost:8080/html/login.html)
-* **Cadastro de Livros (com busca na API externa)**: [http://localhost:8080/html/cadastroLivros.html](http://localhost:8080/html/cadastroLivros.html)
-* **Catálogo de Livros**: [http://localhost:8080/html/catalago.html](http://localhost:8080/html/catalago.html)
-* **Painel do Administrador**: [http://localhost:8080/html/homeADMIN.html](http://localhost:8080/html/homeADMIN.html)
-
-### 🔑 Credenciais de Teste
-* **E-mail**: `admin@fatec.sp.gov.br`
-* **Senha**: `admin123`
-
----
-
-## 📡 Endpoints Principais da API (`/api/v1`)
-
-### Autenticação & Sessão (Requisito 5)
-* `POST /api/v1/register` — Cadastra novo aluno/professor (em `users` e `usuarios`) e inicia sessão.
-* `POST /api/v1/login` — Autentica e inicia sessão persistida com cookie criptografado.
-* `POST /api/v1/logout` — Destrói a sessão e invalida o token.
-* `GET  /api/v1/me` — Retorna os dados do usuário autenticado na sessão.
-
-### Integração com APIs Públicas Externas (Requisito 6)
-* `GET  /api/v1/livros/externo/isbn/{isbn}` — Consulta dados bibliográficos e capa via Google Books, Open Library e BrasilAPI.
-* `GET  /api/v1/livros/externo/buscar?q={termo}&limit={qtd}` — Busca em tempo real no acervo mundial da Open Library API por título, autor ou assunto.
-* `POST /api/v1/livros/externo/importar` — Importa e persiste automaticamente obras da Open Library no PostgreSQL.
-
-### Comandos de Carga Automática via API
+### 3. Carga do Acervo da Open Library (opcional)
 ```bash
-# Carga em massa por temas pré-definidos (Tecnologia, Literatura, Ficção, Fantasia, História)
 docker compose exec backend php artisan biblioteca:importar-api --tudo
-
-# Carga personalizada por termo
-docker compose exec backend php artisan biblioteca:importar-api --termo="inteligencia artificial" --categoria="Engenharia de Software" --limite=8
-```
-
-### CRUDs Eloquent (Requisitos 3 e 4)
-* `GET|POST /api/v1/livros` — Listagem com filtros / Cadastro de livro.
-* `GET|PUT|DELETE /api/v1/livros/{id}` — Visualização, atualização e exclusão de livro.
-* `GET|POST|PUT|DELETE /api/v1/autores` — CRUD completo de autores.
-* `GET|POST|PUT|DELETE /api/v1/categorias` — CRUD completo de categorias de livros.
-* `GET|POST|PUT|DELETE /api/v1/usuarios` — CRUD completo de leitores (alunos e professores).
-* `GET|POST /api/v1/emprestimos` — Listagem e registro de empréstimos.
-* `PATCH /api/v1/emprestimos/{id}/devolucao` — Registro de devolução e baixa no estoque.
-
----
-
-## 📁 Estrutura de Diretórios
-
-```text
-Sistema-Biblioteca-Escolar/
-├── Back/                       # Backend Laravel 13 (API RESTful & Eloquent)
-│   ├── app/
-│   │   ├── Http/Controllers/Api/  # Auth, Livros, Autores, Categorias, Usuários, etc.
-│   │   ├── Models/                # Entidades Eloquent
-│   │   └── Services/              # GoogleBooksService (com fallback Open Library/BrasilAPI)
-│   ├── database/migrations/       # 10 migrations com integridade referencial
-│   └── routes/api.php             # Rotas versionadas sob /api/v1
-├── Front/                      # Frontend Web (HTML, CSS e JavaScript)
-│   ├── css/                    # Estilos das páginas
-│   ├── html/                   # Telas (login, cadastroLivros, catálogo, etc.)
-│   └── javaScripit/            # Scripts assíncronos (Fetch API, cookies, ISBN lookup)
-├── DER.md                      # Diagrama Entidade-Relacionamento e Dicionário de Dados
-├── DOCUMENTACAO_TECNICA.md     # Documentação Técnica e Guia de Handover Completo
-├── docker-compose.yml          # Orquestração dos 3 containers (Front, Back, DB)
-└── README.md                   # Documentação inicial do projeto
 ```
 
 ---
 
-## 🛑 Parar os Containers
+## Acesso Local
+
+- **Interface Web**: [http://localhost:8080/html/login.html](http://localhost:8080/html/login.html)
+- **API REST**: [http://localhost:8000/api/v1](http://localhost:8000/api/v1)
+- **Banco de Dados**: `localhost:5432` (PostgreSQL)
+
+### Credenciais de Teste
+- **E-mail**: `admin@fatec.sp.gov.br`
+- **Senha**: `admin123`
+
+---
+
+## Parar os Containers
+
 ```bash
 docker compose down
 ```
-*(Para reiniciar apagando os dados do banco e reexecutar do zero: `docker compose down -v`)*
