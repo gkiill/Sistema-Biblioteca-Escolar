@@ -13,7 +13,12 @@ class LivroController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Livro::with(["autor", "categorias"]);
+        $query = Livro::with(["autor", "categorias"])
+            ->withCount([
+                "emprestimos as emprestimos_ativos_count" => function ($q) {
+                    $q->whereNull("data_devolucao_real");
+                },
+            ]);
 
         if ($busca = $request->query("busca")) {
             $query->where(function ($q) use ($busca) {
@@ -31,6 +36,14 @@ class LivroController extends Controller
             });
         }
 
+        if ($status = $request->query("status")) {
+            if ($status === "disponivel") {
+                $query->whereRaw("quantidade > (SELECT count(*) FROM emprestimos WHERE emprestimos.livro_id = livros.id AND data_devolucao_real IS NULL)");
+            } elseif ($status === "emprestado") {
+                $query->whereRaw("(SELECT count(*) FROM emprestimos WHERE emprestimos.livro_id = livros.id AND data_devolucao_real IS NULL) > 0");
+            }
+        }
+
         $campoOrdenacao = $request->query("ordenar", "titulo");
         $direcao = $request->query("direcao", "asc");
         $query->orderBy($campoOrdenacao, $direcao);
@@ -38,6 +51,30 @@ class LivroController extends Controller
         $livros = $query->paginate($request->query("per_page", 10));
 
         return response()->json($livros);
+    }
+
+    /**
+     * Retorna métricas consolidadas do estoque para o inventário do bibliotecário.
+     */
+    public function metricasInventario(): JsonResponse
+    {
+        $totalExemplares = (int) Livro::sum("quantidade");
+        $totalTitulos = Livro::count();
+        $emprestimosAtivos = \App\Models\Emprestimo::whereNull("data_devolucao_real")->count();
+        $atrasados = \App\Models\Emprestimo::whereNull("data_devolucao_real")
+            ->where("data_devolucao_prevista", "<", now()->toDateString())
+            ->count();
+        $disponiveis = max(0, $totalExemplares - $emprestimosAtivos);
+        $percentualDisponivel = $totalExemplares > 0 ? round(($disponiveis / $totalExemplares) * 100) : 0;
+
+        return response()->json([
+            "total_estoque" => $totalExemplares,
+            "total_titulos" => $totalTitulos,
+            "disponivel" => $disponiveis,
+            "percentual_disponivel" => $percentualDisponivel,
+            "emprestados" => $emprestimosAtivos,
+            "atrasados" => $atrasados,
+        ]);
     }
 
     public function store(StoreLivroRequest $request): JsonResponse

@@ -29,6 +29,7 @@ Route::prefix("v1")->group(function () {
     Route::get("me", [AuthController::class, "me"]);
     Route::apiResource("autores", AutorController::class);
     Route::apiResource("categorias", CategoriaController::class);
+    Route::get("inventario/metricas", [LivroController::class, "metricasInventario"]);
     Route::apiResource("livros", LivroController::class);
     Route::apiResource("usuarios", UsuarioController::class);
     Route::apiResource("emprestimos", EmprestimoController::class)->only([
