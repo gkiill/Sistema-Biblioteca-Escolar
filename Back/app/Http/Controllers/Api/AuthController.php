@@ -14,29 +14,72 @@ class AuthController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
+        // Normaliza o e-mail em minúsculas e sem espaços
+        $email = strtolower(trim((string) $request->input("email", "")));
+        $request->merge(["email" => $email]);
+
+        // Verifica unicidade antes mesmo das outras validações para mensagem amigável
+        if (\App\Models\User::whereRaw("LOWER(email) = ?", [$email])->exists()) {
+            return response()->json(
+                [
+                    "message" => "Este e-mail institucional já está cadastrado no sistema. Faça login com suas credenciais ou use outro e-mail.",
+                    "errors" => ["email" => ["Este e-mail já está cadastrado no sistema."]],
+                ],
+                422,
+            );
+        }
+
         $dados = $request->validate([
             "name" => "required|string|max:255",
             "email" => "required|email|max:255|unique:users,email",
             "password" => "required|string|min:6",
             "role" => "nullable|string|in:aluno,professor",
-            "documento" => "nullable|string|max:50",
+            "documento" => "required|string|max:50",
         ]);
 
+        $role = $dados["role"] ?? "aluno";
+        $documento = trim($dados["documento"]);
+
+        // Validação e formatação específica por perfil (CPF para professor, RA para aluno)
+        if ($role === "professor") {
+            $cpfLimpo = preg_replace("/\D/", "", $documento);
+            if (!$this->validarCpf($cpfLimpo)) {
+                return response()->json(
+                    [
+                        "message" => "O CPF informado é inválido. Digite um CPF válido com 11 dígitos.",
+                        "errors" => ["documento" => ["CPF inválido."]],
+                    ],
+                    422,
+                );
+            }
+            $documento = $this->formatarCpf($cpfLimpo);
+        } else {
+            // Aluno: RA numérico ou alfanumérico
+            if (strlen($documento) < 3 || strlen($documento) > 20) {
+                return response()->json(
+                    [
+                        "message" => "O RA informado é inválido. Digite um RA válido com no mínimo 3 dígitos.",
+                        "errors" => ["documento" => ["RA inválido."]],
+                    ],
+                    422,
+                );
+            }
+        }
+
         $user = \App\Models\User::create([
-            "name" => $dados["name"],
-            "email" => $dados["email"],
+            "name" => trim($dados["name"]),
+            "email" => $email,
             "password" => bcrypt($dados["password"]),
         ]);
 
-        // Vincula ou cria na tabela usuarios (leitores da biblioteca)
-        $perfil = $dados["role"] ?? "aluno";
+        // Vincula ou atualiza na tabela usuarios (leitores da biblioteca)
         \App\Models\Usuario::updateOrCreate(
-            ["email" => $dados["email"]],
+            ["email" => $email],
             [
-                "nome" => $dados["name"],
-                "perfil" => $perfil,
+                "nome" => trim($dados["name"]),
+                "perfil" => $role,
                 "status" => "ativo",
-            ]
+            ],
         );
 
         // Autentica o usuário na sessão imediatamente
@@ -51,8 +94,8 @@ class AuthController extends Controller
                     "id" => $user->id,
                     "name" => $user->name,
                     "email" => $user->email,
-                    "role" => $perfil,
-                    "documento" => $dados["documento"] ?? "",
+                    "role" => $role,
+                    "documento" => $documento,
                 ],
             ],
             201,
@@ -64,12 +107,15 @@ class AuthController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
+        $email = strtolower(trim((string) $request->input("email", "")));
+        $request->merge(["email" => $email]);
+
         $credenciais = $request->validate([
             "email" => "required|email",
             "password" => "required|string",
         ]);
 
-        if (Auth::attempt($credenciais, $request->boolean("remember", true))) {
+        if (Auth::attempt(["email" => $email, "password" => $credenciais["password"]], $request->boolean("remember", true))) {
             $request->session()->regenerate();
             $user = Auth::user();
 
@@ -141,5 +187,39 @@ class AuthController extends Controller
                 "role" => $role,
             ],
         ]);
+    }
+
+    /**
+     * Valida o algoritmo de dígitos verificadores do CPF brasileiro.
+     */
+    private function validarCpf(string $cpf): bool
+    {
+        $cpf = preg_replace("/\D/", "", $cpf);
+
+        if (strlen($cpf) !== 11 || preg_match("/^(\d)\\1{10}$/", $cpf)) {
+            return false;
+        }
+
+        for ($t = 9; $t < 11; $t++) {
+            $d = 0;
+            for ($c = 0; $c < $t; $c++) {
+                $d += (int) $cpf[$c] * (($t + 1) - $c);
+            }
+            $d = ((10 * $d) % 11) % 10;
+            if ((int) $cpf[$c] !== $d) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Formata CPF no padrão 000.000.000-00.
+     */
+    private function formatarCpf(string $cpf): string
+    {
+        $cpf = preg_replace("/\D/", "", $cpf);
+        return preg_replace("/(\d{3})(\d{3})(\d{3})(\d{2})/", "$1.$2.$3-$4", $cpf);
     }
 }

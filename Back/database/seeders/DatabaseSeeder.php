@@ -304,6 +304,13 @@ class DatabaseSeeder extends Seeder
                 'status' => 'ativo',
             ]
         );
+        User::firstOrCreate(
+            ['email' => 'murilo@fatec.sp.gov.br'],
+            [
+                'name' => 'Murilo Silva',
+                'password' => bcrypt('senha123'),
+            ]
+        );
 
         $aluno2 = Usuario::firstOrCreate(
             ['email' => 'lucas.mendes@fatec.sp.gov.br'],
@@ -313,6 +320,13 @@ class DatabaseSeeder extends Seeder
                 'status' => 'ativo',
             ]
         );
+        User::firstOrCreate(
+            ['email' => 'lucas.mendes@fatec.sp.gov.br'],
+            [
+                'name' => 'Lucas Mendes',
+                'password' => bcrypt('senha123'),
+            ]
+        );
 
         Usuario::firstOrCreate(
             ['email' => 'ana.tourinho@fatec.sp.gov.br'],
@@ -320,6 +334,13 @@ class DatabaseSeeder extends Seeder
                 'nome' => 'Profa. Dra. Ana Lúcia Tourinho',
                 'perfil' => 'professor',
                 'status' => 'ativo',
+            ]
+        );
+        User::firstOrCreate(
+            ['email' => 'ana.tourinho@fatec.sp.gov.br'],
+            [
+                'name' => 'Profa. Dra. Ana Lúcia Tourinho',
+                'password' => bcrypt('senha123'),
             ]
         );
 

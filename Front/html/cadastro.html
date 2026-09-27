@@ -86,6 +86,8 @@
 
         <!-- Campos Dinâmicos -->
         <form id="registerForm" class="register-form hidden">
+          <div id="registerFeedback" style="display:none; padding:12px; margin-bottom:16px; border-radius:8px; font-size:13px; text-align:center; font-weight:500;"></div>
+
           <div class="form-row">
             <div class="input-group">
               <label for="nome">Nome completo:</label>
@@ -94,7 +96,7 @@
             
             <div class="input-group">
               <label id="docLabel" for="documento">RA</label>
-              <input type="text" id="documento" placeholder="ex. 2024001" required>
+              <input type="text" id="documento" placeholder="ex. 2024001" maxlength="12" required autocomplete="off">
             </div>
           </div>
 
@@ -105,8 +107,8 @@
 
           <div class="input-group">
             <label for="password">Senha</label>
-            <input type="password" id="password" placeholder="••••••••" minlength="8" required>
-            <small class="hint">Deve ter pelo menos 8 caracteres.</small>
+            <input type="password" id="password" placeholder="••••••••" minlength="6" required>
+            <small class="hint">Deve ter pelo menos 6 caracteres.</small>
           </div>
 
           <button type="submit" class="btn-submit">Finalizar o cadastro &rarr;</button>
@@ -120,6 +122,6 @@
     </div>
   </main>
 
-  <script src="../javaScripit/scriptCadastro.js?v=2"></script>
+  <script src="../javaScripit/scriptCadastro.js?v=20260927_02"></script>
 </body>
 </html>

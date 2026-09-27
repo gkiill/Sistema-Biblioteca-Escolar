@@ -9,7 +9,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
   const submitBtn = this.querySelector('.btn-submit');
   const feedback = document.getElementById('loginFeedback');
 
-  const email = emailInput.value.trim();
+  const email = emailInput.value.trim().toLowerCase();
   const password = passwordInput.value;
 
   if (feedback) {
@@ -41,10 +41,11 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     let existing = {};
     try { existing = existingRaw ? JSON.parse(existingRaw) : {}; } catch(e){}
 
+    const isSameUser = existing.email && existing.email.toLowerCase() === email;
     const usuarioMerged = {
       ...existing,
       ...data.usuario,
-      documento: (existing.email === email && (existing.documento || existing.ra)) 
+      documento: isSameUser && (existing.documento || existing.ra) 
         ? (existing.documento || existing.ra) 
         : (data.usuario?.documento || '2024001')
     };
