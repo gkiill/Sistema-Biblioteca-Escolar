@@ -1,4 +1,4 @@
-# 📚 Documentação Técnica do Sistema — Biblioteca Escolar Paulo Freire
+# Documentação Técnica do Sistema — Biblioteca
 
 > **Documento de Handover Técnico**  
 > **Finalidade**: Fornecer a base arquitetural, modelo de dados, fluxos de negócio e mapa de endpoints para a elaboração da documentação final e acadêmica do projeto.  
