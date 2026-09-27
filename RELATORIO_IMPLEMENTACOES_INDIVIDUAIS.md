@@ -8,11 +8,8 @@ Ambiente: PHP 8.3 / Laravel 13 / PostgreSQL 16 / Nginx / Docker
 
 ---
 
-## 1. Resumo Executivo das Entregas Realizadas
+## 1. Resumo das Entregas Realizadas
 
-Este relatorio documenta as funcionalidades, correcoes estruturais de banco de dados, servicos de backend e interfaces de usuario que foram implementadas individualmente nesta etapa do projeto.
-
-As contribuicoes abrangeram seis areas principais:
 1. Auditoria e higienizacao de segredos no repositorio.
 2. Integracao com API externa e carga em massa do catalogo com 230 livros reais.
 3. Refatoracao do catalogo para usuarios comuns com paginacao dinamica responsiva.
