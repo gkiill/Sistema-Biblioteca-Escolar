@@ -58,6 +58,7 @@ docker compose exec backend php artisan migrate:fresh --seed
 ## 📡 Endpoints Principais da API (`/api/v1`)
 
 ### Autenticação & Sessão (Requisito 5)
+* `POST /api/v1/register` — Cadastra novo aluno/professor (em `users` e `usuarios`) e inicia sessão.
 * `POST /api/v1/login` — Autentica e inicia sessão persistida com cookie criptografado.
 * `POST /api/v1/logout` — Destrói a sessão e invalida o token.
 * `GET  /api/v1/me` — Retorna os dados do usuário autenticado na sessão.

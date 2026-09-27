@@ -36,8 +36,20 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
       throw new Error(data.message || 'Credenciais inválidas.');
     }
 
-    // Salva os dados do usuário autenticado no navegador
-    localStorage.setItem('usuario_logado', JSON.stringify(data.usuario));
+    // Salva os dados do usuário autenticado no navegador preservando RA e dados locais
+    const existingRaw = localStorage.getItem('usuario_logado');
+    let existing = {};
+    try { existing = existingRaw ? JSON.parse(existingRaw) : {}; } catch(e){}
+
+    const usuarioMerged = {
+      ...existing,
+      ...data.usuario,
+      documento: (existing.email === email && (existing.documento || existing.ra)) 
+        ? (existing.documento || existing.ra) 
+        : (data.usuario?.documento || '2024001')
+    };
+
+    localStorage.setItem('usuario_logado', JSON.stringify(usuarioMerged));
 
     if (feedback) {
       feedback.style.display = 'block';

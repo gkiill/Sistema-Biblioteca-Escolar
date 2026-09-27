@@ -68,3 +68,38 @@ function showAllBooks() {
 function borrowAgain(bookId) {
   alert(`Solicitação para emprestar novamente enviada com sucesso!`);
 }
+
+// Inicialização e sincronização do usuário
+document.addEventListener('DOMContentLoaded', () => {
+  const userSaved = localStorage.getItem('usuario_logado');
+  if (userSaved) {
+    try {
+      const user = JSON.parse(userSaved);
+      const nameEl = document.querySelector('.user-info strong');
+      const emailEl = document.querySelector('.user-info span');
+      const avatarEl = document.querySelector('.user-profile .avatar-icon');
+
+      if (nameEl && user.name) nameEl.textContent = user.name;
+      if (emailEl) {
+        const doc = user.documento || user.ra;
+        emailEl.textContent = doc ? `RA: ${doc}` : user.email;
+      }
+
+      const foto = localStorage.getItem(`foto_perfil_${user.email}`);
+      if (foto && avatarEl) {
+        avatarEl.innerHTML = `<img src="${foto}" alt="${user.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+      }
+    } catch(e) {}
+  }
+
+  document.querySelectorAll('.link-logout').forEach(link => {
+    link.addEventListener('click', async function(e) {
+      e.preventDefault();
+      try {
+        await fetch('http://localhost:8000/api/v1/logout', { method: 'POST', credentials: 'include' });
+      } catch(err){}
+      localStorage.removeItem('usuario_logado');
+      window.location.href = 'login.html';
+    });
+  });
+});

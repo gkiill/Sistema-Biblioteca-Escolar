@@ -125,8 +125,18 @@ document.addEventListener('DOMContentLoaded', () => {
       const user = JSON.parse(userSaved);
       const nameEl = document.querySelector('.user-info strong');
       const emailEl = document.querySelector('.user-info span');
+      const avatarEl = document.querySelector('.user-profile .avatar-icon');
+
       if (nameEl && user.name) nameEl.textContent = user.name;
-      if (emailEl && user.email) emailEl.textContent = user.email;
+      if (emailEl) {
+        const doc = user.documento || user.ra;
+        emailEl.textContent = doc ? `RA: ${doc}` : user.email;
+      }
+
+      const foto = localStorage.getItem(`foto_perfil_${user.email}`);
+      if (foto && avatarEl) {
+        avatarEl.innerHTML = `<img src="${foto}" alt="${user.name}" style="width:100%;height:100%;border-radius:50%;object-fit:cover;">`;
+      }
     } catch(e) {}
   }
 
