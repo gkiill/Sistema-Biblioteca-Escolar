@@ -104,8 +104,9 @@ Sistema-Biblioteca-Escolar/
 │   ├── html/                   # Telas (login, cadastroLivros, catálogo, etc.)
 │   └── javaScripit/            # Scripts assíncronos (Fetch API, cookies, ISBN lookup)
 ├── DER.md                      # Diagrama Entidade-Relacionamento e Dicionário de Dados
+├── DOCUMENTACAO_TECNICA.md     # Documentação Técnica e Guia de Handover Completo
 ├── docker-compose.yml          # Orquestração dos 3 containers (Front, Back, DB)
-└── README.md                   # Documentação do projeto
+└── README.md                   # Documentação inicial do projeto
 ```
 
 ---
