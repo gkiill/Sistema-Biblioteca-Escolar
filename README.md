@@ -1,7 +1,6 @@
 # Sistema de Gestão de Biblioteca Escolar
 
 Projeto desenvolvido para a disciplina de **Desenvolvimento Web II** — **FATEC**.  
-Professor: **DonThom42**
 
 ---
 
@@ -9,7 +8,7 @@ Professor: **DonThom42**
 
 | Requisito | Descrição | Status | Detalhes |
 |---|---|:---:|---|
-| **1. Ambiente Docker** | Ambiente de desenvolvimento local multi-container configurado e documentado | ✅ **Concluído** | Docker Compose com Nginx (Front), PHP 8.4 Laravel (Back) e PostgreSQL 16 (DB) |
+| **1. Ambiente Docker** | Ambiente de desenvolvimento local multi-container configurado e documentado | ✅ **Concluído** | Docker Compose com Nginx (Front), PHP 8.3 Laravel 13 (Back) e PostgreSQL 16 (DB) |
 | **2. Modelagem (DER)** | Modelagem do Banco de Dados relacional finalizada e normalizada | ✅ **Concluído** | 8 tabelas em 3NF documentadas com diagrama Mermaid em [DER.md](./DER.md) |
 | **3. CRUDs Eloquent** | CRUD com Eloquent funcional para as entidades primárias | ✅ **Concluído** | Operações completas para Livros, Autores, Categorias, Usuários e Empréstimos |
 | **4. Rotas e Controllers** | Rotas da API organizadas e Controllers padronizados | ✅ **Concluído** | Versionamento semântico sob o prefixo `/api/v1/...` com Form Requests e validações |
@@ -31,7 +30,7 @@ docker compose up -d
 
 O Docker iniciará automaticamente 3 serviços isolados:
 * **`frontend` (Nginx Alpine)**: Servindo a interface na porta **`8080`**.
-* **`backend` (PHP 8.4 Alpine + Laravel 12)**: Servindo a API RESTful na porta **`8000`**.
+* **`backend` (PHP 8.3 Alpine + Laravel 13)**: Servindo a API RESTful na porta **`8000`**.
 * **`db` (PostgreSQL 16 Alpine)**: Banco de dados relacional na porta **`5432`**.
 
 ### 2. Executar as Migrations e Seeds
@@ -92,7 +91,7 @@ docker compose exec backend php artisan biblioteca:importar-api --termo="intelig
 
 ```text
 Sistema-Biblioteca-Escolar/
-├── Back/                       # Backend Laravel 12 (API RESTful & Eloquent)
+├── Back/                       # Backend Laravel 13 (API RESTful & Eloquent)
 │   ├── app/
 │   │   ├── Http/Controllers/Api/  # Auth, Livros, Autores, Categorias, Usuários, etc.
 │   │   ├── Models/                # Entidades Eloquent

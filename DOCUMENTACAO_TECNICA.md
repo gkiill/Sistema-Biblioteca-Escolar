@@ -39,7 +39,7 @@ O sistema é 100% conteinerizado através do **Docker Compose**, composto por tr
                         ▼                                                ▼
          ┌──────────────────────────────┐                 ┌──────────────────────────────┐
          │     biblioteca_frontend      │                 │     biblioteca_backend       │
-         │         Nginx Alpine         │                 │    PHP 8.2+ / Laravel 11     │
+         │         Nginx Alpine         │                 │    PHP 8.3 / Laravel 13      │
          │   Porta Externa: 8080        │                 │     Porta Externa: 8000      │
          └──────────────────────────────┘                 └──────────────┬───────────────┘
                                                                          │
@@ -60,7 +60,7 @@ O sistema é 100% conteinerizado através do **Docker Compose**, composto por tr
   * CSS3 moderno e modularizado por tela (`cadastro.css`, `catalago.css`, `inventario.css`, etc.).
   * JavaScript Vanilla com chamadas assíncronas via `fetch` API e controle de sessão (`credentials: 'include'`).
 * **Backend**:
-  * Framework **Laravel 11 / 12** no padrão MVC e API RESTful.
+  * Framework **Laravel 13** (PHP 8.3) no padrão MVC e API RESTful.
   * Camada de Serviços desacoplada (`EmprestimoService`, `GoogleBooksService`).
   * Autenticação com sessão persistida no banco (`SESSION_DRIVER=database`).
   * Validações de requisição estritas via Form Requests (`StoreLivroRequest`, etc.).
