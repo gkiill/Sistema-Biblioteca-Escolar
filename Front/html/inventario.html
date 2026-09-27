@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestão de Estoque - Biblioteca Paulo Freire</title>
+  
+  <!-- Ícones do Flaticon -->
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  
+  <link rel="stylesheet" href="../css/inventario.css">
+</head>
+<body>
+
+  <!-- Overlay para o Menu Lateral -->
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Menu Lateral (Sidebar) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="btn-close" onclick="toggleSidebar()">
+        <i class="fi fi-rr-cross"></i>
+      </button>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar-icon">
+        <i class="fi fi-sr-user"></i>
+      </div>
+      <div class="user-info">
+        <strong>Perfil Bibliotecário</strong>
+        <span>ID Funcionário: 2140008</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="homeADMIN.html" class="nav-item">
+        <i class="fi fi-rr-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="perfilBiblio.html" class="nav-item">
+        <i class="fi fi-rr-user"></i>
+        <span>Perfil</span>
+      </a>
+      <a href="cadastroLivros.html" class="nav-item">
+        <i class="fi fi-sr-square-plus"></i>
+        <span>Registro de novos Livros</span>
+      </a>
+      <a href="emprestimos.html" class="nav-item">
+        <i class="fi fi-rr-calendar"></i>
+        <span>Área de Empréstimos</span>
+      </a>
+      <a href="inventario.html" class="nav-item active">
+        <i class="fi fi-rr-box"></i>
+        <span>Inventário</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Navbar Superior -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="btn-menu" onclick="toggleSidebar()">
+        <i class="fi fi-rr-menu-burger"></i>
+      </button>
+    </div>
+    <div class="nav-right">
+      <span class="brand">Biblioteca Paulo Freire</span>
+      <span class="divider">|</span>
+      <a href="login.html" class="link-logout">SAIR</a>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
+    <header class="page-header">
+      <div>
+        <h1 class="page-title">Gestão de estoque</h1>
+        <p class="page-subtitle">Rastreie, gerencie e audite recursos de biblioteca.</p>
+      </div>
+      <a href="cadastroLivros.html" class="btn-add-resource">
+        <i class="fi fi-rr-plus"></i> Adicionar novo livro
+      </a>
+    </header>
+
+    <!-- Cards de Métricas (Dashboard) -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-info">
+          <span class="metric-label">TOTAL DO ESTOQUE</span>
+          <strong class="metric-value" id="statTotal">0</strong>
+          <span class="metric-sub positive">+12 nesse mês</span>
+        </div>
+        <div class="metric-icon-bg">
+          <i class="fi fi-rr-document"></i>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-info">
+          <span class="metric-label">JÁ DISPONÍVEL</span>
+          <strong class="metric-value" id="statAvailable">0</strong>
+          <span class="metric-sub" id="statAvailablePercent">0% do total</span>
+        </div>
+        <div class="metric-icon-bg success-bg">
+          <i class="fi fi-rr-check-circle"></i>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-info">
+          <span class="metric-label">ATUALMENTE EM EMPRÉSTIMO</span>
+          <strong class="metric-value" id="statBorrowed">0</strong>
+          <span class="metric-sub negative" id="statOverdue">0 Atrasados</span>
+        </div>
+        <div class="metric-icon-bg warning-bg">
+          <i class="fi fi-rr-time-fast"></i>
+        </div>
+      </div>
+    </section>
+
+    <!-- Barra de Filtros -->
+    <section class="filter-bar">
+      <div class="search-box">
+        <i class="fi fi-rr-search"></i>
+        <input type="text" id="searchInput" placeholder="Pesquise por título, autor ou ISBN..." oninput="handleFilter()">
+      </div>
+
+      <div class="filter-buttons">
+        <select id="categoryFilter" class="btn-filter-select" onchange="handleFilter()">
+          <option value="ALL">Todas as categorias</option>
+          <option value="Design">Design</option>
+          <option value="Ciência da Computação">Ciência da Computação</option>
+          <option value="Suspense">Suspense</option>
+          <option value="Romance">Romance</option>
+          <option value="Ficção Científica">Ficção Científica</option>
+          <option value="História">História</option>
+        </select>
+
+        <button class="btn-filter-tag" data-status="disponivel" onclick="toggleStatusFilter(this)">Disponível</button>
+        <button class="btn-filter-tag" data-status="emprestado" onclick="toggleStatusFilter(this)">Emprestado</button>
+        <button class="btn-filter-tag status-atrasado" data-status="atrasado" onclick="toggleStatusFilter(this)">Atrasado</button>
+      </div>
+    </section>
+
+    <!-- Tabela de Inventário -->
+    <section class="table-container">
+      <table class="inventory-table">
+        <thead>
+          <tr>
+            <th>TÍTULO E DETALHES</th>
+            <th>CATEGORIA</th>
+            <th>STATUS</th>
+            <th>ÚLTIMA ATIVIDADE</th>
+          </tr>
+        </thead>
+        <tbody id="inventoryTableBody">
+          <!-- Conteúdo gerado via JS -->
+        </tbody>
+      </table>
+
+      <!-- Rodapé com Paginação -->
+      <footer class="table-footer">
+        <span class="table-info" id="tableRecordInfo">Exibindo 0 registros</span>
+        
+        <div class="pagination" id="paginationControls">
+          <!-- Botões gerados via JS -->
+        </div>
+      </footer>
+    </section>
+  </main>
+
+  <script src="../javaScripit/scriptInventário.js"></script>
+</body>
+</html>

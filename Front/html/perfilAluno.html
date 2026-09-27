@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perfil do Estudante - Biblioteca Paulo Freire</title>
+  
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  
+  <link rel="stylesheet" href="../css/perfilAluno.css">
+</head>
+<body>
+
+  <!-- Menu Lateral Fixo -->
+  <aside class="sidebar-fixed">
+    <div class="user-profile">
+      <div class="avatar-icon">
+        <i class="fi fi-sr-user"></i>
+      </div>
+      <div class="user-info">
+        <strong>Perfil Estudante</strong>
+        <span>RA Aluno: 2024001</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="home.html" class="nav-item">
+        <i class="fi fi-rr-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="perfilAluno.html" class="nav-item active">
+        <i class="fi fi-rr-user"></i>
+        <span>Perfil</span>
+      </a>
+      <a href="historico.html" class="nav-item">
+        <i class="fi fi-rr-time-past"></i>
+        <span>Histórico de Livros</span>
+      </a>
+      <a href="catalago.html" class="nav-item">
+        <i class="fi fi-rr-book-alt"></i>
+        <span>Catálogo de Livros</span>
+      </a>
+    </nav>
+
+    <div class="sidebar-footer">
+      <span class="brand">Biblioteca Paulo Freire</span>
+      <span class="divider">|</span>
+      <a href="login.html" class="link-logout">SAIR</a>
+    </div>
+  </aside>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
+    <header class="page-header">
+      <h1 class="page-title">Visão Geral do Perfil</h1>
+      <p class="page-subtitle">Gerencie sua conta e suas configurações da biblioteca.</p>
+    </header>
+
+    <div class="profile-grid">
+      
+      <!-- Card do Perfil -->
+      <section class="card profile-card">
+        <div class="avatar-large" id="avatarDisplay">
+          <i class="fi fi-sr-user"></i>
+        </div>
+        <h2 class="user-name">Jane Doe</h2>
+        <p class="user-dept">Department of Literature</p>
+
+        <div class="ra-badge">
+          <span>RA do Aluno</span>
+          <strong>2024001</strong>
+        </div>
+
+        <button class="btn-secondary btn-full" onclick="openModal('modalEditProfile')">Editar Perfil</button>
+      </section>
+
+      <!-- Card Configurações de Conta -->
+      <section class="card config-card">
+        <div class="card-header">
+          <h2 class="card-title">Configurações de Conta</h2>
+          <i class="fi fi-rr-settings"></i>
+        </div>
+
+        <div class="config-list">
+          <div class="config-item" onclick="openModal('modalEmail')">
+            <div>
+              <h3>Preferências de email</h3>
+              <p>Gerenciar o email de preferência e os alertas</p>
+            </div>
+            <i class="fi fi-rr-angle-right"></i>
+          </div>
+
+          <div class="config-item" onclick="openModal('modalPassword')">
+            <div>
+              <h3>Mudar a senhas</h3>
+              <p>Atualize suas credenciais de segurança</p>
+            </div>
+            <i class="fi fi-rr-angle-right"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- Card Status da Biblioteca -->
+      <section class="card status-card">
+        <h2 class="card-title">Status da biblioteca</h2>
+        
+        <div class="status-list">
+          <div class="status-item">
+            <div class="icon-circle icon-green">
+              <i class="fi fi-rr-check"></i>
+            </div>
+            <div>
+              <span class="status-label">Situação da conta</span>
+              <strong class="status-value text-green">Situação Regular</strong>
+            </div>
+          </div>
+
+          <div class="status-item">
+            <div class="icon-circle icon-blue">
+              <i class="fi fi-rr-bookmark"></i>
+            </div>
+            <div>
+              <span class="status-label">Empréstimos</span>
+              <strong class="status-value">3 / 10 Books</strong>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Card Notificações -->
+      <section class="card info-card">
+        <div class="card-header-simple">
+          <i class="fi fi-rr-bell"></i>
+          <h2 class="card-title">Notificações</h2>
+        </div>
+        <p class="info-text">Você tem 2 novos alertas sobre seus empréstimos.</p>
+        <a href="#" class="card-link">Ver todas as notificações</a>
+      </section>
+
+      <!-- Card Segurança -->
+      <section class="card info-card">
+        <div class="card-header-simple">
+          <i class="fi fi-rr-shield-check"></i>
+          <h2 class="card-title">Segurança</h2>
+        </div>
+        <p class="info-text">Último acesso: Hoje, às 10h45, a partir da rede do campus.</p>
+        <a href="#" class="card-link link-danger">Rever Atividade</a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- MODAL: Editar Perfil (Apenas Foto) -->
+  <div class="modal-overlay" id="modalEditProfile">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Editar Perfil</h2>
+        <button class="btn-close-modal" onclick="closeModal('modalEditProfile')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Nome (Definido pelo Administrador)</label>
+          <input type="text" value="Jane Doe" disabled class="input-disabled">
+        </div>
+        <div class="form-group">
+          <label>Departamento (Definido pelo Administrador)</label>
+          <input type="text" value="Department of Literature" disabled class="input-disabled">
+        </div>
+        <div class="form-group">
+          <label>Foto de Perfil</label>
+          <input type="file" id="photoInput" accept="image/*">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modalEditProfile')">Cancelar</button>
+        <button class="btn-primary" onclick="saveProfilePhoto()">Salvar Foto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Preferências de Email -->
+  <div class="modal-overlay" id="modalEmail">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Preferências de Email</h2>
+        <button class="btn-close-modal" onclick="closeModal('modalEmail')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Email Atual (Alertas)</label>
+          <input type="email" value="jane.doe@universidade.edu.br" disabled class="input-disabled">
+        </div>
+        <div class="form-group">
+          <label>Novo Email de Preferência</label>
+          <input type="email" id="newEmail" placeholder="Digite seu novo email para alertas">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modalEmail')">Cancelar</button>
+        <button class="btn-primary" onclick="saveEmail()">Salvar Alteração</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Mudar a Senha -->
+  <div class="modal-overlay" id="modalPassword">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2>Mudar a Senha</h2>
+        <button class="btn-close-modal" onclick="closeModal('modalPassword')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Senha Atual</label>
+          <input type="password" id="currentPassword" placeholder="Sua senha atual">
+        </div>
+        <div class="form-group">
+          <label>Nova Senha</label>
+          <input type="password" id="newPassword" placeholder="Sua nova senha">
+        </div>
+        <div class="form-group">
+          <label>Confirmar Nova Senha</label>
+          <input type="password" id="confirmPassword" placeholder="Confirme a nova senha">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-secondary" onclick="closeModal('modalPassword')">Cancelar</button>
+        <button class="btn-primary" onclick="savePassword()">Atualizar Senha</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../javaScripit/scriptPerfilAluno.js"></script>
+</body>
+</html>

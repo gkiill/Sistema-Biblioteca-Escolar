@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visão Geral do Perfil - Biblioteca Paulo Freire</title>
+  
+  <!-- Ícones do Flaticon -->
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  
+  <link rel="stylesheet" href="../css/perfilBiblio.css">
+</head>
+<body>
+
+  <!-- Menu Lateral (Fixo na Tela) -->
+  <aside class="sidebar-fixed">
+    <div class="user-profile-summary">
+      <div class="avatar-placeholder-sm" id="sidebarAvatar">
+        <i class="fi fi-sr-user"></i>
+      </div>
+      <div class="user-info-sm">
+        <strong>Perfil Bibliotecário</strong>
+        <span>ID Funcionário: 2140008</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="homeADMIN.html" class="nav-item">
+        <i class="fi fi-rr-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="perfilBiblio.html" class="nav-item active">
+        <i class="fi fi-rr-user"></i>
+        <span>Perfil</span>
+      </a>
+      <a href="cadastroLivros.html" class="nav-item">
+        <i class="fi fi-sr-square-plus"></i>
+        <span>Registro de novos Livros</span>
+      </a>
+      <a href="emprestimo.html" class="nav-item">
+        <i class="fi fi-rr-calendar"></i>
+        <span>Área de Empréstimo</span>
+      </a>
+      <a href="inventario.html" class="nav-item">
+        <i class="fi fi-rr-box"></i>
+        <span>Inventário</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Área de Conteúdo Principal -->
+  <div class="main-wrapper">
+    <main class="main-content">
+      
+      <header class="page-title-area">
+        <h1>Visão Geral do Perfil</h1>
+        <p>Gerencie sua conta e suas configurações da biblioteca.</p>
+      </header>
+
+      <!-- Grid Principal -->
+      <section class="profile-grid-top">
+        
+        <!-- Card 1: Informações do Usuário -->
+        <div class="card-user-info">
+          <div class="avatar-large-container" id="mainAvatarContainer">
+            <i class="fi fi-sr-user" id="mainAvatarIcon"></i>
+            <img id="mainAvatarImg" class="avatar-img-hidden" src="" alt="Foto de perfil">
+          </div>
+          
+          <h2 class="user-name">José Oliveira</h2>
+          <p class="user-dept">Departamento da Biblioteca</p>
+
+          <div class="id-badge-box">
+            <span>ID Funcionário:</span>
+            <strong>2140008</strong>
+          </div>
+
+          <button class="btn-edit-profile" onclick="openModal('modalPhoto')">Editar Perfil</button>
+        </div>
+
+        <!-- Card 2: Configurações de Conta -->
+        <div class="card-account-settings">
+          <div class="card-settings-header">
+            <h3>Configurações de Conta</h3>
+            <i class="fi fi-rr-settings"></i>
+          </div>
+
+          <div class="settings-list">
+            <div class="setting-item" onclick="openModal('modalEmail')">
+              <div class="setting-text">
+                <strong>Preferências de email</strong>
+                <p>Gerenciar o email de preferência</p>
+              </div>
+              <i class="fi fi-rr-angle-right arrow-icon"></i>
+            </div>
+
+            <div class="setting-item" onclick="openModal('modalPassword')">
+              <div class="setting-text">
+                <strong>Mudar a senhas</strong>
+                <p>Atualize suas credenciais de segurança</p>
+              </div>
+              <i class="fi fi-rr-angle-right arrow-icon"></i>
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- Grid Inferior: Status, Notificações e Segurança -->
+      <section class="profile-grid-bottom">
+        
+        <!-- Status da Biblioteca -->
+        <div class="card-status regular" id="statusCard">
+          <h3>Status da biblioteca</h3>
+          <div class="status-content">
+            <div class="status-icon-circle" id="statusIconBox">
+              <i class="fi fi-rr-check" id="statusIcon"></i>
+            </div>
+            <div class="status-details">
+              <span>Situação da biblioteca</span>
+              <strong id="statusText">Situação Regular</strong>
+            </div>
+          </div>
+        </div>
+
+        <!-- Notificações -->
+        <div class="card-notifications">
+          <div class="notif-header">
+            <i class="fi fi-rr-bell"></i>
+            <h3>Notificações</h3>
+          </div>
+          <p id="notifSummaryText">Você tem 2 novos alertas sobre seus empréstimos.</p>
+          <a href="#" class="link-action" onclick="openModal('modalAllNotifs'); return false;">Ver todas as notificações</a>
+        </div>
+
+        <!-- Segurança -->
+        <div class="card-security">
+          <div class="security-header">
+            <i class="fi fi-rr-shield-check"></i>
+            <h3>Segurança</h3>
+          </div>
+          <p>Último acesso: Hoje, às 10h45, a partir da rede do campus.</p>
+          <a href="#" class="link-action-danger">Rever Atividade</a>
+        </div>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- MODAL 1: EDITAR FOTO DO PERFIL -->
+  <div class="modal-overlay" id="modalPhoto">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Editar Foto do Perfil</h3>
+        <button class="btn-close" onclick="closeModal('modalPhoto')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="read-only-notice">Nome e Departamento são gerenciados apenas pelos Administradores do sistema.</p>
+        
+        <div class="form-group">
+          <label for="fileUploadInput">Selecione uma foto (Arquivo de Imagem):</label>
+          <input type="file" id="fileUploadInput" accept="image/*" onchange="previewSelectedFile(this)">
+        </div>
+
+        <div class="file-preview-area">
+          <span>Pré-visualização:</span>
+          <div class="preview-avatar-circle" id="modalPreviewContainer">
+            <i class="fi fi-sr-user" id="modalPreviewIcon"></i>
+            <img id="modalPreviewImg" class="avatar-img-hidden" src="" alt="Prévia">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal('modalPhoto')">Cancelar</button>
+        <button class="btn-save" onclick="saveProfilePhoto()">Salvar Foto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 2: MUDAR A SENHA -->
+  <div class="modal-overlay" id="modalPassword">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Mudar a Senha</h3>
+        <button class="btn-close" onclick="closeModal('modalPassword')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Senha atual:</label>
+          <input type="password" id="inputCurrentPass" placeholder="Digite sua senha atual">
+        </div>
+        <div class="form-group">
+          <label>Nova senha:</label>
+          <input type="password" id="inputNewPass" placeholder="Digite a nova senha">
+        </div>
+        <div class="form-group">
+          <label>Confirmar nova senha:</label>
+          <input type="password" id="inputConfirmPass" placeholder="Confirme a nova senha">
+        </div>
+        <p class="error-text" id="passErrorMsg"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal('modalPassword')">Cancelar</button>
+        <button class="btn-save" onclick="savePasswordChange()">Atualizar Senha</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 3: PREFERÊNCIA DE EMAIL -->
+  <div class="modal-overlay" id="modalEmail">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Preferências de E-mail</h3>
+        <button class="btn-close" onclick="closeModal('modalEmail')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>E-mail atual de alertas:</label>
+          <input type="email" id="inputCurrentEmail" value="jose.oliveira@biblioteca.edu.br" disabled>
+        </div>
+        <div class="form-group">
+          <label>Novo e-mail de preferência:</label>
+          <input type="email" id="inputNewEmail" placeholder="Digite seu novo e-mail para receber os alertas">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal('modalEmail')">Cancelar</button>
+        <button class="btn-save" onclick="saveEmailPreference()">Salvar Preferência</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL 4: TODAS AS NOTIFICAÇÕES -->
+  <div class="modal-overlay" id="modalAllNotifs">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>Central de Notificações</h3>
+        <button class="btn-close" onclick="closeModal('modalAllNotifs')">&times;</button>
+      </div>
+      <div class="modal-body">
+        <ul class="notif-full-list" id="fullNotifList">
+          <!-- Gerado via JS -->
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" onclick="closeModal('modalAllNotifs')">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="../javaScripit/scriptPerfilBiblio.js"></script>
+</body>
+</html>

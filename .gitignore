@@ -1,0 +1,31 @@
+# Volumes e Banco de Dados Local
+postgres_data/
+Back/database/database.sqlite
+Back/database/database.sqlite-journal
+
+# Dependências e Builds
+Back/vendor/
+Back/node_modules/
+Front/node_modules/
+
+# Variáveis de Ambiente e Segredos
+Back/.env
+Back/.env.backup
+Back/.env.production
+Back/storage/*.key
+Back/auth.json
+
+# Logs e Caches de Framework
+Back/storage/logs/*.log
+Back/storage/framework/cache/data/*
+Back/storage/framework/sessions/*
+Back/storage/framework/views/*
+Back/.phpunit.result.cache
+
+# IDEs e Sistema Operacional
+.DS_Store
+Thumbs.db
+Desktop.ini
+.vscode/
+.idea/
+.zed/
