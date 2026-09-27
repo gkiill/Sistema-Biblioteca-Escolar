@@ -25,7 +25,7 @@ services:
       - DB_PORT=5432
       - DB_DATABASE=biblioteca
       - DB_USERNAME=postgres
-      - DB_PASSWORD=F@tec2026&&
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
       - SESSION_DRIVER=database
     volumes:
       - ./Back:/var/www/html
@@ -39,7 +39,7 @@ services:
     environment:
       POSTGRES_DB: biblioteca
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: F@tec2026&&
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
     ports:
       - "5432:5432"
     volumes:
