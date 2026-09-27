@@ -188,11 +188,11 @@ class GoogleBooksService
     /**
      * Busca livros por termo ou assunto na Open Library API.
      */
-    public function buscarPorTexto(string $termo, int $limit = 10): array
+    public function buscarPorTexto(string $termo, int $limit = 20): array
     {
         try {
-            $response = Http::timeout(8)
-                ->retry(2, 300)
+            $response = Http::timeout(10)
+                ->retry(2, 400)
                 ->withUserAgent('SistemaBibliotecaEscolarFatec/1.0 (fatec.sp.gov.br; contato@fatec.sp.gov.br)')
                 ->get('https://openlibrary.org/search.json', [
                     'q' => $termo,
@@ -208,17 +208,20 @@ class GoogleBooksService
             $resultados = [];
 
             foreach ($docs as $doc) {
+                // Apenas importar livros que têm capa oficial disponível
+                if (empty($doc['cover_i']) || empty($doc['title'])) {
+                    continue;
+                }
+
                 $isbn = !empty($doc['isbn']) ? $doc['isbn'][0] : null;
-                $capaUrl = !empty($doc['cover_i'])
-                    ? "https://covers.openlibrary.org/b/id/{$doc['cover_i']}-L.jpg"
-                    : null;
+                $capaUrl = "https://covers.openlibrary.org/b/id/{$doc['cover_i']}-L.jpg";
                 $autor = !empty($doc['author_name'])
                     ? implode(', ', array_slice($doc['author_name'], 0, 2))
                     : 'Autor Desconhecido';
                 $categoria = !empty($doc['subject']) ? $doc['subject'][0] : 'Geral';
 
                 $resultados[] = [
-                    'titulo' => $doc['title'] ?? 'Sem Título',
+                    'titulo' => $doc['title'],
                     'autor' => $autor,
                     'ano_publicacao' => $doc['first_publish_year'] ?? null,
                     'isbn' => $isbn,
@@ -238,7 +241,7 @@ class GoogleBooksService
     /**
      * Importa livros por termo diretamente para o banco de dados.
      */
-    public function importarPorTermo(string $termo, string $categoriaNome = 'Geral', int $limit = 10): int
+    public function importarPorTermo(string $termo, string $categoriaNome = 'Geral', int $limit = 20): int
     {
         $livros = $this->buscarPorTexto($termo, $limit);
         $importados = 0;
@@ -246,7 +249,7 @@ class GoogleBooksService
         $categoria = \App\Models\Categoria::firstOrCreate(['nome' => $categoriaNome]);
 
         foreach ($livros as $item) {
-            if (empty($item['titulo'])) {
+            if (empty($item['titulo']) || empty($item['capa_url'])) {
                 continue;
             }
 
@@ -262,7 +265,7 @@ class GoogleBooksService
                 [
                     'isbn' => $isbn,
                     'ano_publicacao' => $item['ano_publicacao'] ?? date('Y'),
-                    'sinopse' => "Obra importada do acervo internacional Open Library sobre {$termo}.",
+                    'sinopse' => "Obra do acervo internacional sobre {$termo}.",
                     'capa_url' => $item['capa_url'],
                     'quantidade' => rand(2, 6),
                     'autor_id' => $autor->id,

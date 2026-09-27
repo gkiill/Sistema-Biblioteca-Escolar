@@ -34,11 +34,24 @@ class ImportarLivrosApiCommand extends Command
 
         if ($this->option('tudo')) {
             $temas = [
-                ['termo' => 'software engineering', 'cat' => 'Engenharia de Software', 'qtd' => 6],
-                ['termo' => 'literatura brasileira', 'cat' => 'Literatura Brasileira', 'qtd' => 6],
-                ['termo' => 'science fiction', 'cat' => 'Ficção Científica & Distopia', 'qtd' => 6],
-                ['termo' => 'fantasy', 'cat' => 'Fantasia & Aventura', 'qtd' => 6],
-                ['termo' => 'history', 'cat' => 'História & Filosofia', 'qtd' => 6],
+                ['termo' => 'clean code', 'cat' => 'Engenharia de Software', 'qtd' => 12],
+                ['termo' => 'design patterns', 'cat' => 'Engenharia de Software', 'qtd' => 12],
+                ['termo' => 'computer networks', 'cat' => 'Redes & Infraestrutura', 'qtd' => 12],
+                ['termo' => 'machado de assis', 'cat' => 'Literatura Brasileira', 'qtd' => 12],
+                ['termo' => 'clarice lispector', 'cat' => 'Literatura Brasileira', 'qtd' => 12],
+                ['termo' => 'jorge amado', 'cat' => 'Literatura Brasileira', 'qtd' => 12],
+                ['termo' => 'dune frank herbert', 'cat' => 'Ficção Científica & Distopia', 'qtd' => 12],
+                ['termo' => 'isaac asimov', 'cat' => 'Ficção Científica & Distopia', 'qtd' => 12],
+                ['termo' => 'philip k dick', 'cat' => 'Ficção Científica & Distopia', 'qtd' => 12],
+                ['termo' => 'lord of the rings', 'cat' => 'Fantasia & Aventura', 'qtd' => 12],
+                ['termo' => 'harry potter', 'cat' => 'Fantasia & Aventura', 'qtd' => 12],
+                ['termo' => 'percy jackson', 'cat' => 'Fantasia & Aventura', 'qtd' => 12],
+                ['termo' => 'agatha christie', 'cat' => 'Suspense & Mistério', 'qtd' => 12],
+                ['termo' => 'sherlock holmes', 'cat' => 'Suspense & Mistério', 'qtd' => 12],
+                ['termo' => 'stephen king', 'cat' => 'Suspense & Mistério', 'qtd' => 12],
+                ['termo' => 'sapiens harari', 'cat' => 'História & Filosofia', 'qtd' => 12],
+                ['termo' => 'filosofia', 'cat' => 'História & Filosofia', 'qtd' => 12],
+                ['termo' => 'psicologia', 'cat' => 'História & Filosofia', 'qtd' => 12],
             ];
 
             $totalGeral = 0;
@@ -47,9 +60,10 @@ class ImportarLivrosApiCommand extends Command
                 $count = $booksService->importarPorTermo($t['termo'], $t['cat'], $t['qtd']);
                 $this->info(" -> {$count} livros importados para '{$t['cat']}'.");
                 $totalGeral += $count;
+                usleep(250000); // 250ms de cortesia para a API
             }
 
-            $this->info("Importação em massa concluída! Total de livros adicionados: {$totalGeral}");
+            $this->info("Importação em massa concluída! Total de livros adicionados nesta rodada: {$totalGeral}");
             return Command::SUCCESS;
         }
 
