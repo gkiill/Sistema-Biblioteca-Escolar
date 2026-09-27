@@ -41,13 +41,11 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
     let existing = {};
     try { existing = existingRaw ? JSON.parse(existingRaw) : {}; } catch(e){}
 
-    const isSameUser = existing.email && existing.email.toLowerCase() === email;
     const usuarioMerged = {
       ...existing,
       ...data.usuario,
-      documento: isSameUser && (existing.documento || existing.ra) 
-        ? (existing.documento || existing.ra) 
-        : (data.usuario?.documento || '2024001')
+      documento: data.usuario?.documento || existing.documento || existing.ra || '2024001',
+      departamento: data.usuario?.departamento || existing.departamento || (data.usuario?.role === 'professor' ? 'Corpo Docente' : 'Análise e Desenvolvimento de Sistemas')
     };
 
     localStorage.setItem('usuario_logado', JSON.stringify(usuarioMerged));

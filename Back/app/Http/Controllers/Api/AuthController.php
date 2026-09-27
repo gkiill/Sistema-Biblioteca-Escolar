@@ -72,12 +72,16 @@ class AuthController extends Controller
             "password" => bcrypt($dados["password"]),
         ]);
 
+        $departamento = $role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas";
+
         // Vincula ou atualiza na tabela usuarios (leitores da biblioteca)
         \App\Models\Usuario::updateOrCreate(
             ["email" => $email],
             [
                 "nome" => trim($dados["name"]),
+                "documento" => $documento,
                 "perfil" => $role,
+                "departamento" => $departamento,
                 "status" => "ativo",
             ],
         );
@@ -96,6 +100,7 @@ class AuthController extends Controller
                     "email" => $user->email,
                     "role" => $role,
                     "documento" => $documento,
+                    "departamento" => $departamento,
                 ],
             ],
             201,
@@ -121,6 +126,8 @@ class AuthController extends Controller
 
             $usuarioLeitor = \App\Models\Usuario::where("email", $user->email)->first();
             $role = $usuarioLeitor->perfil ?? (str_contains($user->email, "admin") ? "admin" : "aluno");
+            $documento = $usuarioLeitor->documento ?? "";
+            $departamento = $usuarioLeitor->departamento ?? ($role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas");
 
             return response()->json([
                 "mensagem" => "Login realizado com sucesso!",
@@ -129,7 +136,8 @@ class AuthController extends Controller
                     "name" => $user->name,
                     "email" => $user->email,
                     "role" => $role,
-                    "documento" => "",
+                    "documento" => $documento,
+                    "departamento" => $departamento,
                 ],
             ]);
         }
@@ -177,6 +185,8 @@ class AuthController extends Controller
 
         $usuarioLeitor = \App\Models\Usuario::where("email", $user->email)->first();
         $role = $usuarioLeitor->perfil ?? (str_contains($user->email, "admin") ? "admin" : "aluno");
+        $documento = $usuarioLeitor->documento ?? "";
+        $departamento = $usuarioLeitor->departamento ?? ($role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas");
 
         return response()->json([
             "autenticado" => true,
@@ -185,6 +195,8 @@ class AuthController extends Controller
                 "name" => $user->name,
                 "email" => $user->email,
                 "role" => $role,
+                "documento" => $documento,
+                "departamento" => $departamento,
             ],
         ]);
     }

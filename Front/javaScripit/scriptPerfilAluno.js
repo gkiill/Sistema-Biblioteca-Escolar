@@ -96,8 +96,8 @@ async function carregarPerfilDoUsuario() {
         const mergedUser = {
           ...user,
           ...json.usuario,
-          documento: user?.documento || user?.ra || '2024001',
-          departamento: user?.departamento || 'Análise e Desenvolvimento de Sistemas'
+          documento: json.usuario?.documento || user?.documento || user?.ra || '2024001',
+          departamento: json.usuario?.departamento || user?.departamento || (json.usuario?.role === 'professor' ? 'Corpo Docente' : 'Análise e Desenvolvimento de Sistemas')
         };
         localStorage.setItem('usuario_logado', JSON.stringify(mergedUser));
         preencherDadosPerfil(mergedUser);

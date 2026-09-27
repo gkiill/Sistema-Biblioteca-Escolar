@@ -59,11 +59,12 @@ function selectRole(role) {
 const docInputField = document.getElementById('documento');
 if (docInputField) {
   docInputField.addEventListener('input', function(e) {
-    let valor = e.target.value;
+    // Permite apenas dígitos numéricos
+    let valor = e.target.value.replace(/\D/g, '');
 
     if (selectedRole === 'professor') {
-      // Limita a 11 dígitos e aplica máscara 000.000.000-00
-      valor = valor.replace(/\D/g, '').slice(0, 11);
+      // Limita a 11 dígitos numéricos e aplica máscara 000.000.000-00
+      valor = valor.slice(0, 11);
       if (valor.length > 9) {
         valor = valor.replace(/^(\d{3})(\d{3})(\d{3})(\d{1,2})$/, '$1.$2.$3-$4');
       } else if (valor.length > 6) {
@@ -73,8 +74,8 @@ if (docInputField) {
       }
       e.target.value = valor;
     } else {
-      // Aluno: Apenas números/letras limpos até 12 caracteres
-      e.target.value = valor.replace(/[^a-zA-Z0-9]/g, '').slice(0, 12);
+      // Aluno: Apenas números até 12 dígitos
+      e.target.value = valor.slice(0, 12);
     }
   });
 }
@@ -194,4 +195,9 @@ document.getElementById('registerForm').addEventListener('submit', async functio
     submitBtn.disabled = false;
     submitBtn.textContent = 'Finalizar o cadastro →';
   }
+});
+
+// Inicialização automática
+document.addEventListener('DOMContentLoaded', () => {
+  selectRole('aluno');
 });
