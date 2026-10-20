@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Visão Geral do Bibliotecário - Biblioteca Paulo Freire</title>
+  
+  <!-- Ícones do Flaticon -->
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-regular-rounded/css/uicons-regular-rounded.css">
+  <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/uicons-solid-rounded/css/uicons-solid-rounded.css">
+  
+  <link rel="stylesheet" href="../css/homeADMIN.css">
+</head>
+<body>
+
+  <!-- Overlay para o Menu Lateral -->
+  <div class="overlay" id="overlay" onclick="toggleSidebar()"></div>
+
+  <!-- Menu Lateral (Sidebar) -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <button class="btn-close" onclick="toggleSidebar()">
+        <i class="fi fi-rr-cross"></i>
+      </button>
+    </div>
+
+    <div class="user-profile">
+      <div class="avatar-icon">
+        <i class="fi fi-sr-user"></i>
+      </div>
+      <div class="user-info">
+        <strong>Perfil Bibliotecário</strong>
+        <span>ID Funcionário: 2140008</span>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a href="homeADMIN.css" class="nav-item active">
+        <i class="fi fi-rr-home"></i>
+        <span>Home</span>
+      </a>
+      <a href="perfilBiblio.html" class="nav-item">
+        <i class="fi fi-rr-user"></i>
+        <span>Perfil</span>
+      </a>
+      <a href="cadastroLivros.html" class="nav-item">
+        <i class="fi fi-sr-square-plus"></i>
+        <span>Registro de novos Livros</span>
+      </a>
+      <a href="emprestimo.html" class="nav-item">
+        <i class="fi fi-rr-calendar"></i>
+        <span>Área de Empréstimos</span>
+      </a>
+      <a href="inventario.html" class="nav-item">
+        <i class="fi fi-rr-box"></i>
+        <span>Inventário</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Navbar Superior -->
+  <header class="navbar">
+    <div class="nav-left">
+      <button class="btn-menu" onclick="toggleSidebar()">
+        <i class="fi fi-rr-menu-burger"></i>
+      </button>
+    </div>
+    <div class="nav-right">
+      <span class="brand">Biblioteca Paulo Freire</span>
+      <span class="divider">|</span>
+      <a href="login.html" class="link-logout">SAIR</a>
+    </div>
+  </header>
+
+  <!-- Conteúdo Principal -->
+  <main class="main-content">
+    
+    <!-- Topo: Título e Busca -->
+    <div class="dashboard-header">
+      <div>
+        <h1 class="page-title">Visão geral</h1>
+        <p class="page-subtitle">Veja a visão geral de hoje:</p>
+      </div>
+
+      <div class="header-actions">
+        <div class="search-box">
+          <i class="fi fi-rr-search"></i>
+          <input type="text" id="searchInput" placeholder="Pesquise por livros, atividades ..." onkeyup="handleSearch()">
+        </div>
+        <button class="btn-icon" title="Notificações">
+          <i class="fi fi-rr-bell"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Cards Principais de Estatísticas -->
+    <section class="stats-grid">
+      
+      <!-- Card 1: Empréstimos de Hoje -->
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">EMPRÉSTIMOS DE HOJE</span>
+          <div class="icon-circle circle-blue">
+            <i class="fi fi-rr-refresh"></i>
+          </div>
+        </div>
+        <div class="stat-value">8</div>
+      </div>
+
+      <!-- Card 2: Devoluções Pendentes -->
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">DEVOLUÇÕES PENDENTES</span>
+          <div class="icon-circle circle-red-light">
+            <i class="fi fi-rr-exclamation"></i>
+          </div>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">5</span>
+          <span class="stat-sub">Com vencimento para hoje</span>
+        </div>
+      </div>
+
+      <!-- Card 3: Novos Membros -->
+      <div class="stat-card">
+        <div class="stat-header">
+          <span class="stat-label">NOVOS MEMBROS</span>
+          <div class="icon-circle circle-blue-light">
+            <i class="fi fi-rr-user-add"></i>
+          </div>
+        </div>
+        <div class="stat-body">
+          <span class="stat-value">15</span>
+          <span class="stat-sub">Essa semana</span>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- Grid Inferior: Atividades Recentes e Atenção Necessária -->
+    <div class="bottom-grid">
+      
+      <!-- Painel de Atividades Recentes -->
+      <section class="section-card">
+        <div class="section-header">
+          <h2 class="section-title">Atividades recentes</h2>
+          <a href="inventario.html" class="link-see-all">Ver tudo</a>
+        </div>
+
+        <div class="activity-list" id="activityList">
+          
+          <div class="activity-item">
+            <div class="activity-icon icon-green">
+              <i class="fi fi-rr-check"></i>
+            </div>
+            <div class="activity-info">
+              <p class="activity-text"><strong>Sarah Jenkins</strong> devolveu <em>O Design do Dia a Dia</em></p>
+              <span class="activity-time">10 mins atrás</span>
+            </div>
+            <span class="badge badge-return">Devolvido</span>
+          </div>
+
+          <div class="activity-item">
+            <div class="activity-icon icon-blue">
+              <i class="fi fi-rr-bookmark"></i>
+            </div>
+            <div class="activity-info">
+              <p class="activity-text"><strong>Michael Chen</strong> pegou emprestado <em>Clean Code</em></p>
+              <span class="activity-time">25 mins atrás</span>
+            </div>
+            <span class="badge badge-borrow">Empréstimo</span>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- Painel de Atenção Necessária -->
+      <section class="section-card">
+        <h2 class="section-title">Atenção necessária</h2>
+
+        <div class="alert-box">
+          <div class="alert-header">
+            <i class="fi fi-rr-triangle-warning alert-icon"></i>
+            <div>
+              <strong class="alert-title">Itens em atraso (3)</strong>
+              <p class="alert-desc">Requer acompanhamento imediato.</p>
+            </div>
+          </div>
+          <button class="btn-alert" onclick="goToOverdue()">Revisar agora</button>
+        </div>
+      </section>
+
+    </div>
+
+  </main>
+
+  <script src="../javaScripit/scriptHomeADIMIN.js"></script>
+</body>
+</html>
