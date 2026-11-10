@@ -1,0 +1,105 @@
+
+/*INDEX.CSS
+   BASE VISUAL GLOBAL DO SISTEMA*/
+
+
+/*VARIÁVEIS GLOBAIS*/
+
+:root {
+  /* Cores principais */
+  --color-primary: #03254c;
+  --color-primary-dark: #021a36;
+
+  /* Fundos */
+  --color-bg: #fdfbf7;
+  --color-surface: #ffffff;
+  --color-surface-alt: #edf2f7;
+
+  /* Textos */
+  --color-text: #1a202c;
+  --color-text-strong: #2d3748;
+  --color-text-soft: #4a5568;
+  --color-text-muted: #718096;
+  --color-text-faint: #a0aec0;
+
+  /* Bordas */
+  --color-border: #e2e8f0;
+  --color-border-strong: #cbd5e0;
+
+  /* Status */
+  --color-success: #2f855a;
+  --color-success-bg: #e6f4ea;
+  --color-danger: #a91d22;
+  --color-danger-bg: #fde8e8;
+  --color-info: #3182ce;
+  --color-info-bg: #ebf8ff;
+  --color-action-green: #034c3c;
+
+  /* Fontes */
+  --font-body: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  --font-title: Georgia, serif;
+
+  /* Medidas */
+  --sidebar-width: 280px;
+  --sidebar-fixed-width: 260px;
+  --content-max: 1100px;
+
+  /* Camadas: definem o que aparece na frente */
+  --z-navbar: 100;
+  --z-overlay: 200;
+  --z-sidebar: 300;
+  --z-modal: 1000;
+}
+
+
+/*RESET GLOBAL*/
+
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+
+/*CONFIGURAÇÕES GERAIS DA PÁGINA*/
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+
+/*RAIZ DO REACT*/
+
+#root {
+  min-height: 100vh;
+}
+
+
+/*ELEMENTOS DE FORMULÁRIO*/
+
+button,
+input,
+textarea,
+select {
+  font-family: inherit;
+}
+
+
+/*ÍCONES SVG*/
+
+svg {
+  display: inline-block;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
