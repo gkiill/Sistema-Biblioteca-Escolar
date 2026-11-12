@@ -4,6 +4,9 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function CadastroLivro() {
+
+
+
   return (
     <div>
       {/* Conteúdo Principal */}
@@ -22,7 +25,7 @@ function CadastroLivro() {
               <div
                 className="card dropzone-card"
                 id="dropzone"
-                onClick="openCoverModal()"
+                onClick={openCoverModal}
               >
                 <div className="dropzone-content" id="dropzoneContent">
                   <div className="upload-circle">

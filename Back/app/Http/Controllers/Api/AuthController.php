@@ -33,33 +33,32 @@ class AuthController extends Controller
             "name" => "required|string|max:255",
             "email" => "required|email|max:255|unique:users,email",
             "password" => "required|string|min:6",
-            "role" => "nullable|string|in:aluno,professor",
-            "documento" => "required|string|max:50",
+            "profile" => "nullable|string|in:aluno,professor,bibliotecario",
+            "document" => "required|string|max:50",
         ]);
 
-        $role = $dados["role"] ?? "aluno";
-        $documento = trim($dados["documento"]);
+        $profile = $dados["profile"] ?? "aluno";
+        $document = trim($dados["document"]);
 
         // Validação e formatação específica por perfil (CPF para professor, RA para aluno)
-        if ($role === "professor") {
-            $cpfLimpo = preg_replace("/\D/", "", $documento);
-            if (!$this->validarCpf($cpfLimpo)) {
+        if ($profile === "aluno") {
+            // Aluno: RA numérico ou alfanumérico
+            if (strlen($document) != 6) {
                 return response()->json(
                     [
-                        "message" => "O CPF informado é inválido. Digite um CPF válido com 11 dígitos.",
-                        "errors" => ["documento" => ["CPF inválido."]],
+                        "message" => "O RA informado é inválido. Digite um RA válido com 6 dígitos.",
+                        "errors" => ["document" => ["RA inválido."]],
                     ],
                     422,
                 );
             }
-            $documento = $this->formatarCpf($cpfLimpo);
         } else {
-            // Aluno: RA numérico ou alfanumérico
-            if (strlen($documento) < 3 || strlen($documento) > 20) {
+            $document = preg_replace("/\D/", "", $document);
+            if (!$this->validarCpf($document)) {
                 return response()->json(
                     [
-                        "message" => "O RA informado é inválido. Digite um RA válido com no mínimo 3 dígitos.",
-                        "errors" => ["documento" => ["RA inválido."]],
+                        "message" => "O CPF informado é inválido. Digite um CPF válido com 11 dígitos.",
+                        "errors" => ["document" => ["CPF inválido."]],
                     ],
                     422,
                 );
@@ -70,21 +69,10 @@ class AuthController extends Controller
             "name" => trim($dados["name"]),
             "email" => $email,
             "password" => bcrypt($dados["password"]),
+            "profile" => $profile,
+            "document" => $document,
+            "status" => "ativo",
         ]);
-
-        $departamento = $role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas";
-
-        // Vincula ou atualiza na tabela usuarios (leitores da biblioteca)
-        \App\Models\Usuario::updateOrCreate(
-            ["email" => $email],
-            [
-                "nome" => trim($dados["name"]),
-                "documento" => $documento,
-                "perfil" => $role,
-                "departamento" => $departamento,
-                "status" => "ativo",
-            ],
-        );
 
         // Autentica o usuário na sessão imediatamente
         Auth::login($user);
@@ -98,9 +86,8 @@ class AuthController extends Controller
                     "id" => $user->id,
                     "name" => $user->name,
                     "email" => $user->email,
-                    "role" => $role,
-                    "documento" => $documento,
-                    "departamento" => $departamento,
+                    "profile" => $user->profile,
+                    "document" => $user->document,
                 ],
             ],
             201,
@@ -212,7 +199,7 @@ class AuthController extends Controller
             return false;
         }
 
-        for ($t = 9; $t < 11; $t++) {
+        /*for ($t = 9; $t < 11; $t++) {
             $d = 0;
             for ($c = 0; $c < $t; $c++) {
                 $d += (int) $cpf[$c] * (($t + 1) - $c);
@@ -221,7 +208,7 @@ class AuthController extends Controller
             if ((int) $cpf[$c] !== $d) {
                 return false;
             }
-        }
+        }*/
 
         return true;
     }

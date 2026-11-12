@@ -15,9 +15,7 @@ function Login() {
     setErro(null);
 
     try {
-      console.log("Tentando fazer login com:", email, password);
       await login(email, password);
-      console.log("Login bem-sucedido!");
       navigate("/home");
     } catch (err) {
       setErro("E-mail ou senha inválidos.");
@@ -49,7 +47,7 @@ function Login() {
           </p>
         </div>
 
-       {/* Formulário de Login */}
+        {/* Formulário de Login */}
         <form id="loginForm" className="login-form" onSubmit={handleSubmit}>
           {/* Caixa de feedback de erro / sucesso */}
           <div
@@ -65,7 +63,9 @@ function Login() {
               textAlign: "center",
               fontWeight: "500",
             }}
-          >{erro}</div>
+          >
+            {erro}
+          </div>
 
           <div className="input-group">
             <label htmlFor="email">Email</label>
