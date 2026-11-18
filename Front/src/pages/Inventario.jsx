@@ -1,9 +1,40 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import api from "../services/api"; // Importação do serviço axios
 
-function Inventario() {
+export default function Inventario() {
+  const { usuario } = useAuth(); // Obtém o usuário logado corretamente
+  const [livros, setLivros] = useState([]);
+  const [carregando, setCarregando] = useState(false);
+  const [erro, setErro] = useState(null);
+
+  useEffect(() => {
+    let ativo = true;
+    setCarregando(true);
+
+    api
+      .get("/livros") // Ajuste para a rota correta do seu back-end de inventário/livros
+      .then(({ data }) => {
+        if (!ativo) return;
+        const lista = Array.isArray(data) ? data : (data?.data ?? []);
+        setLivros(lista);
+        setErro(null);
+      })
+      .catch(() => {
+        if (ativo) setErro("Não foi possível carregar o inventário de livros.");
+      })
+      .finally(() => {
+        if (ativo) setCarregando(false);
+      });
+
+    return () => {
+      ativo = false;
+    };
+  }, []); // Executa ao carregar a página
+
+  if (!usuario) return null;
+
   return (
     <div>
       {/* Conteúdo Principal */}
@@ -20,15 +51,18 @@ function Inventario() {
           </Link>
         </header>
 
+        {/* Mensagem de Erro ou Aviso */}
+        {erro && <div className="error-banner" style={{ color: "red", marginBottom: "16px" }}>{erro}</div>}
+
         {/* Cards de Métricas (Dashboard) */}
         <section className="metrics-grid">
           <div className="metric-card">
             <div className="metric-info">
               <span className="metric-label">TOTAL DO ESTOQUE</span>
               <strong className="metric-value" id="statTotal">
-                0
+                {livros.length}
               </strong>
-              <span className="metric-sub positive">+12 nesse mês</span>
+              <span className="metric-sub positive">Atualizado</span>
             </div>
             <div className="metric-icon-bg">
               <i className="fi fi-rr-document"></i>
@@ -39,10 +73,10 @@ function Inventario() {
             <div className="metric-info">
               <span className="metric-label">JÁ DISPONÍVEL</span>
               <strong className="metric-value" id="statAvailable">
-                0
+                {livros.filter(l => l.status === 'disponivel').length}
               </strong>
               <span className="metric-sub" id="statAvailablePercent">
-                0% do total
+                {livros.length > 0 ? Math.round((livros.filter(l => l.status === 'disponivel').length / livros.length) * 100) : 0}% do total
               </span>
             </div>
             <div className="metric-icon-bg success-bg">
@@ -54,10 +88,10 @@ function Inventario() {
             <div className="metric-info">
               <span className="metric-label">ATUALMENTE EM EMPRÉSTIMO</span>
               <strong className="metric-value" id="statBorrowed">
-                0
+                {livros.filter(l => l.status === 'emprestado' || l.status === 'atrasado').length}
               </strong>
               <span className="metric-sub negative" id="statOverdue">
-                0 Atrasados
+                {livros.filter(l => l.status === 'atrasado').length} Atrasados
               </span>
             </div>
             <div className="metric-icon-bg warning-bg">
@@ -74,8 +108,6 @@ function Inventario() {
               type="text"
               id="searchInput"
               placeholder="Pesquise por título, autor ou ISBN..."
-              onChange="handleFilter()"
-              required
             />
           </div>
 
@@ -83,7 +115,6 @@ function Inventario() {
             <select
               id="categoryFilter"
               className="btn-filter-select"
-              onChange="handleFilter()"
             >
               <option value="ALL">Todas as categorias</option>
               <option value="Design">Design</option>
@@ -96,25 +127,13 @@ function Inventario() {
               <option value="História">História</option>
             </select>
 
-            <button
-              className="btn-filter-tag"
-              data-status="disponivel"
-              onClick="toggleStatusFilter(this)"
-            >
+            <button className="btn-filter-tag" data-status="disponivel">
               Disponível
             </button>
-            <button
-              className="btn-filter-tag"
-              data-status="emprestado"
-              onClick="toggleStatusFilter(this)"
-            >
+            <button className="btn-filter-tag" data-status="emprestado">
               Emprestado
             </button>
-            <button
-              className="btn-filter-tag status-atrasado"
-              data-status="atrasado"
-              onClick="toggleStatusFilter(this)"
-            >
+            <button className="btn-filter-tag status-atrasado" data-status="atrasado">
               Atrasado
             </button>
           </div>
@@ -132,24 +151,41 @@ function Inventario() {
               </tr>
             </thead>
             <tbody id="inventoryTableBody">
-              {/* Conteúdo gerado via JS */}
+              {carregando ? (
+                <tr>
+                  <td colSpan="4" style={{ textAlign: "center", padding: "20px" }}>
+                    Carregando inventário...
+                  </td>
+                </tr>
+              ) : livros.length === 0 ? (
+                <tr>
+                  <td colSpan="4" style={{ textAlign: "center", padding: "20px" }}>
+                    Nenhum livro encontrado no estoque.
+                  </td>
+                </tr>
+              ) : (
+                livros.map((livro) => (
+                  <tr key={livro.id}>
+                    <td>{livro.titulo}</td>
+                    <td>{livro.categoria}</td>
+                    <td>{livro.status}</td>
+                    <td>{livro.updated_at ?? "—"}</td>
+                  </tr>
+                ))
+              )}
             </tbody>
           </table>
 
           {/* Rodapé com Paginação */}
           <footer className="table-footer">
             <span className="table-info" id="tableRecordInfo">
-              Exibindo 0 registros
+              Exibindo {livros.length} registros
             </span>
 
-            <div className="pagination" id="paginationControls">
-              {/* Botões gerados via JS */}
-            </div>
+            <div className="pagination" id="paginationControls"></div>
           </footer>
         </section>
       </main>
     </div>
   );
 }
-
-export default Inventario;

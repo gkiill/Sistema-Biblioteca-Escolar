@@ -37,10 +37,8 @@ export default function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/livro/:id" element={<Livro />} />
-        </Route>
-
-        {/* Fora do Layout: o Catálogo monta a própria Sidebar (com filtros) */}
-        <Route path="/catalogo" element={<Catalogo />} />
+          <Route path="/catalogo" element={<Catalogo />} />
+        </Route>        
       </Route>
 
       {/* SOMENTE BIBLIOTECÁRIO (@biblio.instituicao.edu.br) */}

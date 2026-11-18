@@ -1,9 +1,117 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+
+const EMPTY_FORM = {
+  userName: "",
+  userId: "",
+  userEmail: "",
+  bookTitle: "",
+  bookIsbn: "",
+  pickupDate: "",
+  returnDate: "",
+  librarianName: "",
+  librarianId: "",
+};
+
+// Máscara de ISBN: 000-00-0000-0 (ISBN-10) ou 000-00-0000-000-0 (ISBN-13)
+function formatIsbn(value) {
+  const digits = value
+    .replace(/[^\dXx]/g, "")
+    .toUpperCase()
+    .slice(0, 13);
+  const groups = digits.length <= 10 ? [3, 2, 4, 1] : [3, 2, 4, 3, 1];
+
+  const parts = [];
+  let index = 0;
+  for (const size of groups) {
+    if (index >= digits.length) break;
+    parts.push(digits.slice(index, index + size));
+    index += size;
+  }
+  return parts.join("-");
+}
+
+// "2026-11-20" -> "20/11/2026" (sem usar Date, para evitar erro de fuso horário)
+function formatDateBR(isoDate) {
+  if (!isoDate) return "--/--/----";
+  const [year, month, day] = isoDate.split("-");
+  return `${day}/${month}/${year}`;
+}
 
 function Emprestimo() {
+  const navigate = useNavigate();
+
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [autoRenew, setAutoRenew] = useState(false);
+
+  // Modal 1: já começa aberto, como no código original
+  const [confirmAccessOpen, setConfirmAccessOpen] = useState(true);
+
+  // Modal 2: null | "loading" | "success"
+  const [status, setStatus] = useState(null);
+  const [confirmedReturnDate, setConfirmedReturnDate] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleIsbnChange = (e) => {
+    const masked = formatIsbn(e.target.value);
+    setForm((prev) => ({ ...prev, bookIsbn: masked }));
+  };
+
+  // ---- Modal de confirmação de acesso ----
+  const confirmAccess = () => setConfirmAccessOpen(false);
+
+  const rejectAccess = () => {
+    setConfirmAccessOpen(false);
+    navigate("/"); // ajuste para a rota para onde o usuário deve voltar
+  };
+
+  // ---- Ações do formulário ----
+  const resetForm = () => {
+    setForm(EMPTY_FORM);
+    setAutoRenew(false);
+  };
+
+  const cancelLoan = () => resetForm();
+
+  const handleLoanSubmit = async (e) => {
+    e.preventDefault();
+
+    if (form.returnDate < form.pickupDate) {
+      alert("A data de devolução não pode ser anterior à data de retirada.");
+      return;
+    }
+
+    setStatus("loading");
+
+    try {
+      // TODO: troque pela chamada real ao seu back-end, por exemplo:
+      // const res = await fetch("/api/emprestimos", {
+      //   method: "POST",
+      //   headers: { "Content-Type": "application/json" },
+      //   body: JSON.stringify({ ...form, autoRenew }),
+      // });
+      // if (!res.ok) throw new Error("Erro ao registrar empréstimo");
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      setConfirmedReturnDate(formatDateBR(form.returnDate));
+      setStatus("success");
+    } catch (err) {
+      console.error(err);
+      setStatus(null);
+      alert("Não foi possível registrar o empréstimo. Tente novamente.");
+    }
+  };
+
+  const finishLoanProcess = () => {
+    setStatus(null);
+    resetForm();
+    navigate("/"); // ajuste para a rota que você quiser
+  };
+
   return (
     <div>
       {/* Conteúdo Principal */}
@@ -18,7 +126,7 @@ function Emprestimo() {
 
         <form
           id="loanForm"
-          onSubmit="handleLoanSubmit(event)"
+          onSubmit={handleLoanSubmit}
           className="loan-card-container"
         >
           <div className="card">
@@ -34,6 +142,9 @@ function Emprestimo() {
                     <input
                       type="text"
                       id="userName"
+                      name="userName"
+                      value={form.userName}
+                      onChange={handleChange}
                       placeholder="ex. Jane Doe"
                       required
                     />
@@ -49,6 +160,9 @@ function Emprestimo() {
                     <input
                       type="text"
                       id="userId"
+                      name="userId"
+                      value={form.userId}
+                      onChange={handleChange}
                       placeholder="ex. 20248921"
                       required
                     />
@@ -63,6 +177,9 @@ function Emprestimo() {
                   <input
                     type="email"
                     id="userEmail"
+                    name="userEmail"
+                    value={form.userEmail}
+                    onChange={handleChange}
                     placeholder="ex. jane.doe@aluno.instituicao.edu.br / jane.doe@professor.instituicao.edu.br"
                     required
                   />
@@ -82,6 +199,9 @@ function Emprestimo() {
                     <input
                       type="text"
                       id="bookTitle"
+                      name="bookTitle"
+                      value={form.bookTitle}
+                      onChange={handleChange}
                       placeholder="Insira o título"
                       required
                     />
@@ -95,9 +215,12 @@ function Emprestimo() {
                     <input
                       type="text"
                       id="bookIsbn"
+                      name="bookIsbn"
+                      value={form.bookIsbn}
+                      onChange={handleIsbnChange}
                       placeholder="ex. 000-00-0000-0"
-                      maxLength="13"
-                      onChange="applyISBNMask(this)"
+                      maxLength={17}
+                      inputMode="numeric"
                       required
                     />
                   </div>
@@ -112,12 +235,27 @@ function Emprestimo() {
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="pickupDate">Data de retirada</label>
-                  <input type="date" id="pickupDate" required />
+                  <input
+                    type="date"
+                    id="pickupDate"
+                    name="pickupDate"
+                    value={form.pickupDate}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="returnDate">Data de devolução</label>
-                  <input type="date" id="returnDate" required />
+                  <input
+                    type="date"
+                    id="returnDate"
+                    name="returnDate"
+                    value={form.returnDate}
+                    min={form.pickupDate || undefined}
+                    onChange={handleChange}
+                    required
+                  />
                 </div>
               </div>
 
@@ -131,6 +269,9 @@ function Emprestimo() {
                     <input
                       type="text"
                       id="librarianName"
+                      name="librarianName"
+                      value={form.librarianName}
+                      onChange={handleChange}
                       placeholder="ex. Jane Doe"
                       required
                     />
@@ -146,6 +287,9 @@ function Emprestimo() {
                     <input
                       type="text"
                       id="librarianId"
+                      name="librarianId"
+                      value={form.librarianId}
+                      onChange={handleChange}
                       placeholder="ex. 20258926"
                       required
                     />
@@ -156,7 +300,12 @@ function Emprestimo() {
               {/* Box Renovação Automática */}
               <div className="renovation-box">
                 <label className="checkbox-container">
-                  <input type="checkbox" id="autoRenew" required />
+                  <input
+                    type="checkbox"
+                    id="autoRenew"
+                    checked={autoRenew}
+                    onChange={(e) => setAutoRenew(e.target.checked)}
+                  />
                   <span className="checkmark"></span>
                   <div className="checkbox-text">
                     <strong>Ativar renovação automática</strong>
@@ -171,11 +320,7 @@ function Emprestimo() {
 
             {/* Botões de Ação */}
             <div className="form-actions">
-              <button
-                type="button"
-                className="btn-cancel"
-                onClick="cancelLoan()"
-              >
+              <button type="button" className="btn-cancel" onClick={cancelLoan}>
                 Cancelar
               </button>
               <button type="submit" className="btn-submit">
@@ -187,7 +332,11 @@ function Emprestimo() {
       </main>
 
       {/* MODAL 1: Confirmação Inicial de Acesso */}
-      <div className="modal-overlay active" id="modalConfirmAccess">
+      <div
+        className={`modal-overlay${confirmAccessOpen ? " active" : ""}`}
+        id="modalConfirmAccess"
+        style={{ display: confirmAccessOpen ? "flex" : "none" }}
+      >
         <div className="modal-container">
           <div className="modal-header">
             <h2>Confirmar Acesso</h2>
@@ -202,14 +351,14 @@ function Emprestimo() {
             <button
               type="button"
               className="btn-secondary"
-              onClick="rejectAccess()"
+              onClick={rejectAccess}
             >
               Fechar
             </button>
             <button
               type="button"
               className="btn-primary"
-              onClick="confirmAccess()"
+              onClick={confirmAccess}
             >
               Confirmar
             </button>
@@ -218,36 +367,42 @@ function Emprestimo() {
       </div>
 
       {/* MODAL 2: Processamento e Sucesso do Empréstimo */}
-      <div className="modal-overlay" id="statusModal">
+      <div
+        className={`modal-overlay${status ? " active" : ""}`}
+        id="statusModal"
+        style={{ display: status ? "flex" : "none" }}
+      >
         <div className="status-card-modal">
           {/* Estado 1: Loading */}
-          <div id="statusLoading" className="status-state">
-            <div className="spinner"></div>
-            <p>Processando empréstimo...</p>
-          </div>
+          {status === "loading" && (
+            <div id="statusLoading" className="status-state">
+              <div className="spinner"></div>
+              <p>Processando empréstimo...</p>
+            </div>
+          )}
 
           {/* Estado 2: Sucesso */}
-          <div
-            id="statusSuccess"
-            className="status-state"
-            style="display: none;"
-          >
-            <div className="success-circle">
-              <i className="fi fi-rr-check"></i>
+          {status === "success" && (
+            <div id="statusSuccess" className="status-state">
+              <div className="success-circle">
+                <i className="fi fi-rr-check"></i>
+              </div>
+              <h3 className="success-title">
+                Empréstimo efetuado com sucesso!
+              </h3>
+              <p className="success-date-msg">
+                O livro deve ser devolvido até:{" "}
+                <strong id="displayReturnDate">{confirmedReturnDate}</strong>
+              </p>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={finishLoanProcess}
+              >
+                Concluir
+              </button>
             </div>
-            <h3 className="success-title">Empréstimo efetuado com sucesso!</h3>
-            <p className="success-date-msg">
-              O livro deve ser devolvido até:{" "}
-              <strong id="displayReturnDate">--/--/----</strong>
-            </p>
-            <button
-              type="button"
-              className="btn-primary"
-              onClick="finishLoanProcess()"
-            >
-              Concluir
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </div>

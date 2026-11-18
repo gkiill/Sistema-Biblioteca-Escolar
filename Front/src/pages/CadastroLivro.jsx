@@ -1,11 +1,231 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
+
+// Categorias agrupadas (antes estavam repetidas no JSX)
+const CATEGORY_GROUPS = [
+  {
+    title: "Ficção",
+    items: ["Romance", "Novela", "Conto", "Crônica"],
+  },
+  {
+    title: "Subgêneros da Ficção",
+    items: [
+      "Fantasia",
+      "Ficção Científica",
+      "Suspense (Thriller)",
+      "Horror/Terror",
+      "Romance de Época",
+      "Aventura",
+      "Ficção Policial",
+    ],
+  },
+  {
+    title: "Não Ficção",
+    items: [
+      "Biografias, Autobiografias e Memórias",
+      "Divulgação Científica",
+      "Ensaios",
+      "Livros Didáticos e Técnicos",
+    ],
+  },
+];
+
+const EMPTY_FORM = {
+  title: "",
+  author: "",
+  isbn: "",
+  publisher: "",
+  publicationDate: "",
+  synopsis: "",
+};
+
+// A API do Google Books pode devolver "2008" ou "2008-05";
+// o <input type="date"> só aceita "AAAA-MM-DD".
+function normalizeDate(value) {
+  if (!value) return "";
+  if (/^\d{4}$/.test(value)) return `${value}-01-01`;
+  if (/^\d{4}-\d{2}$/.test(value)) return `${value}-01`;
+  return value;
+}
 
 function CadastroLivro() {
+  const navigate = useNavigate();
 
+  // ---- Campos do formulário ----
+  const [form, setForm] = useState(EMPTY_FORM);
+  const [category, setCategory] = useState("");
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const [tags, setTags] = useState(["Clássico"]);
+  const [tagInput, setTagInput] = useState("");
 
+  // ---- Capa ----
+  const [savedCover, setSavedCover] = useState(null); // { file, url }
+  const coverInputRef = useRef(null);
+
+  // ---- ISBN ----
+  const [isbnLoading, setIsbnLoading] = useState(false);
+  const [isbnFeedback, setIsbnFeedback] = useState({ text: "", type: "" });
+
+  // ---- Status do cadastro: null | "loading" | "success" ----
+  const [status, setStatus] = useState(null);
+
+  // Atualiza qualquer campo simples pelo atributo name
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // ================= Capa =================
+  // Abre direto a janela de arquivos do computador/celular
+  const openFilePicker = () => coverInputRef.current?.click();
+
+  const applyCoverFile = (file) => {
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("Selecione um arquivo de imagem (JPG, PNG, WEBP...).");
+      return;
+    }
+    // Libera a prévia anterior da memória
+    if (savedCover?.url) URL.revokeObjectURL(savedCover.url);
+    setSavedCover({ file, url: URL.createObjectURL(file) });
+  };
+
+  const handleCoverChange = (e) => {
+    applyCoverFile(e.target.files?.[0]);
+    e.target.value = ""; // permite escolher o mesmo arquivo de novo
+  };
+
+  const removeCover = (e) => {
+    e.stopPropagation(); // não reabrir o seletor ao clicar em "Remover"
+    if (savedCover?.url) URL.revokeObjectURL(savedCover.url);
+    setSavedCover(null);
+  };
+
+  // Arrastar e soltar na dropzone
+  const handleDrop = (e) => {
+    e.preventDefault();
+    applyCoverFile(e.dataTransfer.files?.[0]);
+  };
+
+  // ================= Categoria =================
+  const filteredGroups = CATEGORY_GROUPS.map((group) => ({
+    ...group,
+    items: group.items.filter((item) =>
+      item.toLowerCase().includes(category.toLowerCase())
+    ),
+  })).filter((group) => group.items.length > 0);
+
+  const selectCategory = (name) => {
+    setCategory(name);
+    setCategoryOpen(false);
+  };
+
+  // ================= Tags =================
+  const addTag = (e) => {
+    if (e.key !== "Enter") return;
+    e.preventDefault(); // evita enviar o formulário ao apertar Enter
+    const value = tagInput.trim();
+    if (value && !tags.includes(value)) {
+      setTags((prev) => [...prev, value]);
+    }
+    setTagInput("");
+  };
+
+  const removeTag = (tagToRemove) => {
+    setTags((prev) => prev.filter((t) => t !== tagToRemove));
+  };
+
+  // ================= Busca por ISBN =================
+  const buscarDadosIsbn = async () => {
+    const isbn = form.isbn.replace(/[^0-9Xx]/g, "");
+    if (!isbn) {
+      setIsbnFeedback({ text: "Digite um ISBN primeiro.", type: "error" });
+      return;
+    }
+
+    setIsbnLoading(true);
+    setIsbnFeedback({ text: "Buscando...", type: "info" });
+
+    try {
+      const res = await fetch(
+        `https://www.googleapis.com/books/v1/volumes?q=isbn:${isbn}`
+      );
+      if (!res.ok) throw new Error("Falha na requisição");
+      const data = await res.json();
+
+      if (!data.items || data.items.length === 0) {
+        setIsbnFeedback({ text: "Nenhum livro encontrado.", type: "error" });
+        return;
+      }
+
+      const info = data.items[0].volumeInfo;
+
+      setForm((prev) => ({
+        ...prev,
+        title: info.title || prev.title,
+        author: info.authors?.join(", ") || prev.author,
+        publisher: info.publisher || prev.publisher,
+        publicationDate:
+          normalizeDate(info.publishedDate) || prev.publicationDate,
+        synopsis: info.description || prev.synopsis,
+      }));
+
+      setIsbnFeedback({ text: "Dados preenchidos com sucesso!", type: "success" });
+    } catch (err) {
+      console.error(err);
+      setIsbnFeedback({ text: "Erro ao buscar na API.", type: "error" });
+    } finally {
+      setIsbnLoading(false);
+    }
+  };
+
+  const feedbackColor = {
+    success: "#16a34a",
+    error: "#dc2626",
+    info: "#2563eb",
+  }[isbnFeedback.type];
+
+  // ================= Envio =================
+  const resetForm = () => {
+    setForm(EMPTY_FORM);
+    setCategory("");
+    setCategoryOpen(false);
+    setTags([]);
+    setTagInput("");
+    if (savedCover?.url) URL.revokeObjectURL(savedCover.url);
+    setSavedCover(null);
+    setIsbnFeedback({ text: "", type: "" });
+  };
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    setStatus("loading");
+
+    try {
+      const payload = new FormData();
+      Object.entries(form).forEach(([key, value]) => payload.append(key, value));
+      payload.append("category", category);
+      payload.append("tags", JSON.stringify(tags));
+      if (savedCover?.file) payload.append("cover", savedCover.file);
+
+      // TODO: troque pela chamada real ao seu back-end, por exemplo:
+      // const res = await fetch("/api/livros", { method: "POST", body: payload });
+      // if (!res.ok) throw new Error("Erro ao cadastrar");
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      setStatus("success");
+    } catch (err) {
+      console.error(err);
+      setStatus(null);
+      alert("Não foi possível cadastrar o livro. Tente novamente.");
+    }
+  };
+
+  const finishRegistration = () => {
+    setStatus(null);
+    resetForm();
+    navigate("/"); // ajuste para a rota que você quiser (ex.: "/livros")
+  };
 
   return (
     <div>
@@ -18,37 +238,81 @@ function CadastroLivro() {
           </p>
         </header>
 
-        <form id="bookForm" onSubmit="handleFormSubmit(event)">
+        <form id="bookForm" onSubmit={handleFormSubmit}>
           <div className="form-grid">
             {/* Coluna da Esquerda: Upload e Ações */}
             <div className="left-column">
+              {/* Input de arquivo oculto: é ele que abre a janela de arquivos */}
+              <input
+                type="file"
+                id="coverFileInput"
+                accept="image/*"
+                ref={coverInputRef}
+                onChange={handleCoverChange}
+                style={{ display: "none" }}
+              />
+
               <div
                 className="card dropzone-card"
                 id="dropzone"
-                onClick={openCoverModal}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault();
+                    openFilePicker();
+                  }
+                }}
+                onClick={openFilePicker}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={handleDrop}
               >
-                <div className="dropzone-content" id="dropzoneContent">
-                  <div className="upload-circle">
-                    <i className="fi fi-rr-cloud-upload"></i>
+                {savedCover ? (
+                  <div style={{ position: "relative", width: "100%", height: "100%" }}>
+                    <img
+                      src={savedCover.url}
+                      alt="Capa do livro"
+                      style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                    />
+                    <button
+                      type="button"
+                      onClick={removeCover}
+                      style={{
+                        position: "absolute",
+                        top: "8px",
+                        right: "8px",
+                        background: "rgba(0,0,0,0.7)",
+                        color: "#fff",
+                        border: "none",
+                        borderRadius: "4px",
+                        padding: "4px 10px",
+                        fontSize: "12px",
+                        cursor: "pointer",
+                      }}
+                    >
+                      Remover
+                    </button>
                   </div>
-                  <strong className="upload-title">Fazer upload da capa</strong>
-                  <p className="upload-desc">
-                    Arraste e solte ou clique para procurar.
-                    <br />
-                    Tamanho recomendado: 600x900px
-                  </p>
-                </div>
+                ) : (
+                  <div className="dropzone-content" id="dropzoneContent">
+                    <div className="upload-circle">
+                      <i className="fi fi-rr-cloud-upload"></i>
+                    </div>
+                    <strong className="upload-title">Fazer upload da capa</strong>
+                    <p className="upload-desc">
+                      Arraste e solte ou clique para procurar.
+                      <br />
+                      Tamanho recomendado: 600x900px
+                    </p>
+                  </div>
+                )}
               </div>
 
               <div className="action-box">
                 <button type="submit" className="btn-submit">
                   <i className="fi fi-rr-disk"></i> Salvar novo título
                 </button>
-                <button
-                  type="button"
-                  className="btn-cancel"
-                  onClick="resetForm()"
-                >
+                <button type="button" className="btn-cancel" onClick={resetForm}>
                   Cancelar
                 </button>
               </div>
@@ -68,6 +332,9 @@ function CadastroLivro() {
                   <input
                     type="text"
                     id="bookTitle"
+                    name="title"
+                    value={form.title}
+                    onChange={handleChange}
                     placeholder="ex. The Great Gatsby"
                     required
                   />
@@ -79,35 +346,73 @@ function CadastroLivro() {
                     <input
                       type="text"
                       id="bookAuthor"
+                      name="author"
+                      value={form.author}
+                      onChange={handleChange}
                       placeholder="ex. F. Scott Fitzgerald"
                       required
                     />
                   </div>
                   <div className="form-group">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                      <label htmlFor="bookIsbn" style="margin-bottom: 0;">
+                    <div
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        marginBottom: "6px",
+                      }}
+                    >
+                      <label htmlFor="bookIsbn" style={{ marginBottom: 0 }}>
                         ISBN
                       </label>
                       <button
                         type="button"
                         id="btnBuscarIsbn"
-                        onClick="buscarDadosIsbn()"
-                        style="background: #2563eb; color: #fff; border: none; padding: 4px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; display: flex; align-items: center; gap: 4px; font-weight: 500;"
+                        onClick={buscarDadosIsbn}
+                        disabled={isbnLoading}
+                        style={{
+                          background: "#2563eb",
+                          color: "#fff",
+                          border: "none",
+                          padding: "4px 10px",
+                          borderRadius: "4px",
+                          fontSize: "11px",
+                          cursor: isbnLoading ? "wait" : "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px",
+                          fontWeight: 500,
+                          opacity: isbnLoading ? 0.7 : 1,
+                        }}
                       >
-                        <i className="fi fi-rr-search"></i> Buscar na API
+                        <i className="fi fi-rr-search"></i>{" "}
+                        {isbnLoading ? "Buscando..." : "Buscar na API"}
                       </button>
                     </div>
                     <input
                       type="text"
                       id="bookIsbn"
+                      name="isbn"
+                      value={form.isbn}
+                      onChange={handleChange}
                       placeholder="ex. 9788532511010"
-                      maxLength="20"
+                      maxLength={20}
                       required
                     />
-                    <small
-                      id="isbnFeedback"
-                      style="display:none; font-size: 11px; margin-top: 4px; font-weight: 500;"
-                    ></small>
+                    {isbnFeedback.text && (
+                      <small
+                        id="isbnFeedback"
+                        style={{
+                          display: "block",
+                          fontSize: "11px",
+                          marginTop: "4px",
+                          fontWeight: 500,
+                          color: feedbackColor,
+                        }}
+                      >
+                        {isbnFeedback.text}
+                      </small>
+                    )}
                   </div>
                 </div>
 
@@ -117,15 +422,23 @@ function CadastroLivro() {
                     <input
                       type="text"
                       id="bookPublisher"
+                      name="publisher"
+                      value={form.publisher}
+                      onChange={handleChange}
                       placeholder="ex. Scribner"
                       required
                     />
                   </div>
                   <div className="form-group">
-                    <label htmlFor="bookPublicationDate">
-                      Data de publicação
-                    </label>
-                    <input type="date" id="bookPublicationDate" required />
+                    <label htmlFor="bookPublicationDate">Data de publicação</label>
+                    <input
+                      type="date"
+                      id="bookPublicationDate"
+                      name="publicationDate"
+                      value={form.publicationDate}
+                      onChange={handleChange}
+                      required
+                    />
                   </div>
                 </div>
               </section>
@@ -140,80 +453,69 @@ function CadastroLivro() {
                 <div className="form-row">
                   {/* Select/Search Interativo */}
                   <div className="form-group custom-select-group">
-                    <label>Categoria principal</label>
+                    <label htmlFor="categoryInput">Categoria principal</label>
                     <div
                       className="select-box"
-                      onClick="toggleCategoryDropdown()"
+                      onClick={() => setCategoryOpen((open) => !open)}
                     >
                       <input
                         type="text"
                         id="categoryInput"
+                        value={category}
+                        onChange={(e) => {
+                          setCategory(e.target.value);
+                          setCategoryOpen(true);
+                        }}
                         placeholder="Selecione ou digite a categoria"
-                        onKeyUp="filterCategories()"
                         autoComplete="off"
                       />
                       <i className="fi fi-rr-angle-small-down"></i>
                     </div>
-                    <ul className="dropdown-list" id="categoryList">
-                      {/* Ficção */}
-                      <li className="dropdown-header">Ficção</li>
-                      <li onClick="selectCategory('Romance')">Romance</li>
-                      <li onClick="selectCategory('Novela')">Novela</li>
-                      <li onClick="selectCategory('Conto')">Conto</li>
-                      <li onClick="selectCategory('Crônica')">Crônica</li>
 
-                      {/* Subgêneros */}
-                      <li className="dropdown-header">Subgêneros da Ficção</li>
-                      <li onClick="selectCategory('Fantasia')">Fantasia</li>
-                      <li onClick="selectCategory('Ficção Científica')">
-                        Ficção Científica
-                      </li>
-                      <li onClick="selectCategory('Suspense (Thriller)')">
-                        Suspense (Thriller)
-                      </li>
-                      <li onClick="selectCategory('Horror/Terror')">
-                        Horror/Terror
-                      </li>
-                      <li onClick="selectCategory('Romance de Época')">
-                        Romance de Época
-                      </li>
-                      <li onClick="selectCategory('Aventura')">Aventura</li>
-                      <li onClick="selectCategory('Ficção Policial')">
-                        Ficção Policial
-                      </li>
-
-                      {/* Não Ficção */}
-                      <li className="dropdown-header">Não Ficção</li>
-                      <li onClick="selectCategory('Biografias, Autobiografias e Memórias')">
-                        Biografias, Autobiografias e Memórias
-                      </li>
-                      <li onClick="selectCategory('Divulgação Científica')">
-                        Divulgação Científica
-                      </li>
-                      <li onClick="selectCategory('Ensaios')">Ensaios</li>
-                      <li onClick="selectCategory('Livros Didáticos e Técnicos')">
-                        Livros Didáticos e Técnicos
-                      </li>
+                    <ul
+                      className="dropdown-list"
+                      id="categoryList"
+                      style={{ display: categoryOpen ? "block" : "none" }}
+                    >
+                      {filteredGroups.length === 0 && (
+                        <li className="dropdown-header">
+                          Nenhuma categoria encontrada
+                        </li>
+                      )}
+                      {filteredGroups.map((group) => (
+                        <div key={group.title}>
+                          <li className="dropdown-header">{group.title}</li>
+                          {group.items.map((item) => (
+                            <li key={item} onClick={() => selectCategory(item)}>
+                              {item}
+                            </li>
+                          ))}
+                        </div>
+                      ))}
                     </ul>
                   </div>
 
                   {/* Input de Tags */}
                   <div className="form-group">
-                    <label>Tags</label>
+                    <label htmlFor="tagInput">Tags</label>
                     <div className="tags-container" id="tagsContainer">
                       <div className="tags-list" id="tagsList">
-                        <span className="tag">
-                          Clássico{" "}
-                          <button type="button" onClick="removeTag(this)">
-                            &times;
-                          </button>
-                        </span>
+                        {tags.map((tag) => (
+                          <span className="tag" key={tag}>
+                            {tag}{" "}
+                            <button type="button" onClick={() => removeTag(tag)}>
+                              &times;
+                            </button>
+                          </span>
+                        ))}
                       </div>
                       <input
                         type="text"
                         id="tagInput"
-                        placeholder="Escreva e aperte do enter"
-                        onKeyDown="addTag(event)"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={addTag}
+                        placeholder="Escreva e aperte enter"
                       />
                     </div>
                   </div>
@@ -230,7 +532,10 @@ function CadastroLivro() {
                 <div className="form-group full-width">
                   <textarea
                     id="bookSynopsis"
-                    rows="5"
+                    name="synopsis"
+                    value={form.synopsis}
+                    onChange={handleChange}
+                    rows={5}
                     placeholder="Escreva a sinopse do livro ou um pequeno texto sobre o livro"
                   ></textarea>
                 </div>
@@ -240,86 +545,39 @@ function CadastroLivro() {
         </form>
       </main>
 
-      {/* MODAL: Upload da Capa */}
-      <div className="modal-overlay" id="modalCover">
-        <div className="modal-container">
-          <div className="modal-header">
-            <h2>Upload da Capa do Livro</h2>
-            <button
-              type="button"
-              className="btn-close-modal"
-              onClick="closeCoverModal()"
-            >
-              &times;
-            </button>
-          </div>
-          <div className="modal-body">
-            <div className="file-upload-area">
-              <input
-                type="file"
-                id="coverFileInput"
-                accept="image/*"
-                onChange="previewCoverImage(event)"
-              />
-              <i className="fi fi-rr-cloud-upload"></i>
-              <p>Clique aqui para selecionar a imagem da capa</p>
-            </div>
-            <div
-              className="preview-area"
-              id="modalPreviewArea"
-              style="display: none;"
-            >
-              <img id="coverPreviewImg" src="" alt="Prévia da Capa" />
-            </div>
-          </div>
-          <div className="modal-footer">
-            <button
-              type="button"
-              className="btn-secondary"
-              onClick="closeCoverModal()"
-            >
-              Fechar
-            </button>
-            <button
-              type="button"
-              className="btn-primary"
-              onClick="confirmCoverUpload()"
-            >
-              Salvar Capa
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* OVERLAY DE CARREGAMENTO / SUCESSO DO CADASTRO */}
-      <div className="modal-overlay" id="statusModal">
+      <div
+        className="modal-overlay"
+        id="statusModal"
+        style={{ display: status ? "flex" : "none" }}
+      >
         <div className="status-card-modal">
           {/* Estado 1: Loading */}
-          <div id="statusLoading" className="status-state">
-            <div className="spinner"></div>
-            <p>Cadastrando novo livro...</p>
-          </div>
+          {status === "loading" && (
+            <div id="statusLoading" className="status-state">
+              <div className="spinner"></div>
+              <p>Cadastrando novo livro...</p>
+            </div>
+          )}
 
           {/* Estado 2: Sucesso */}
-          <div
-            id="statusSuccess"
-            className="status-state"
-            style="display: none;"
-          >
-            <div className="success-circle">
-              <i className="fi fi-rr-check"></i>
+          {status === "success" && (
+            <div id="statusSuccess" className="status-state">
+              <div className="success-circle">
+                <i className="fi fi-rr-check"></i>
+              </div>
+              <p className="success-msg">
+                Cadastro do novo livro foi efetuado com sucesso!
+              </p>
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={finishRegistration}
+              >
+                Concluir
+              </button>
             </div>
-            <p className="success-msg">
-              Cadastro do novo livro foi efetuado com sucesso!
-            </p>
-            <button
-              type="button"
-              className="btn-primary"
-              onClick="finishRegistration()"
-            >
-              Concluir
-            </button>
-          </div>
+          )}
         </div>
       </div>
     </div>

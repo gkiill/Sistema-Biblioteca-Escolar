@@ -4,15 +4,21 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 function Livro() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
+
   return (
     <div>
       {/* Conteúdo Principal */}
       <main className="main-content">
         {/* Botão Voltar */}
         <div className="top-actions">
-          <button className="btn-back" onClick="goBack()">
+          <button className="btn-back" onClick={() => navigate("/catalogo")}>
             <div className="btn-back-icon">
-              <i className="fi fi-rr-arrow-left"></i>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+              </svg>
             </div>
             <span>Voltar</span>
           </button>

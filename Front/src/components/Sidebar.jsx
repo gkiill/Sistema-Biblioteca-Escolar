@@ -2,19 +2,19 @@ import { Link, NavLink } from "react-router-dom";
 import { useAuth, PERFIS } from "../context/AuthContext";
 
 /* Links do menu para cada tipo de usuário.
-   (mesmos ícones, textos e ordem que você já tinha nas páginas) */
+   Os caminhos (to) precisam ser iguais aos do App.jsx. */
 const MENU_BIBLIOTECARIO = [
   { to: "/home", icone: "fi fi-rr-home", texto: "Home" },
   { to: "/perfil", icone: "fi fi-rr-user", texto: "Perfil" },
   {
     to: "/cadastrolivro",
     icone: "fi fi-sr-square-plus",
-    texto: "Registro de novos Livros",
+    texto: "Cadastro de Livros",
   },
   {
     to: "/emprestimo",
     icone: "fi fi-rr-calendar",
-    texto: "Área de Empréstimos",
+    texto: "Empréstimo de Livros",
   },
   { to: "/inventario", icone: "fi fi-rr-box", texto: "Inventário" },
 ];
@@ -35,17 +35,14 @@ const INFO_PERFIL = {
   [PERFIS.BIBLIOTECARIO]: {
     titulo: "Perfil Bibliotecário",
     rotulo: "ID Funcionário",
-    padrao: "2140008",
   },
   [PERFIS.ALUNO]: {
     titulo: "Perfil Estudante",
     rotulo: "RA Aluno",
-    padrao: "2024001",
   },
   [PERFIS.PROFESSOR]: {
     titulo: "Perfil Professor",
     rotulo: "ID Professor",
-    padrao: "",
   },
 };
 
@@ -61,14 +58,15 @@ const INFO_PERFIL = {
 export default function Sidebar({ aberta, onFechar, fixa = false, children }) {
   const { usuario, logout } = useAuth();
 
+  // usuario.perfil já vem definido pelo AuthContext (domínio do e-mail)
   const perfil = usuario?.perfil;
   const itens =
     perfil === PERFIS.BIBLIOTECARIO ? MENU_BIBLIOTECARIO : MENU_LEITOR;
   const info = INFO_PERFIL[perfil] ?? INFO_PERFIL[PERFIS.ALUNO];
 
-  // ATENÇÃO: "identificacao" é um nome de campo suposto.
-  // Ajuste para o nome que a sua API devolve em /me.
-  const identificacao = usuario?.identificacao ?? info.padrao;
+  // O AuthContext já junta identificacao/documento/ra em "identificacao".
+  // "||" (e não "??") para mostrar "—" também quando vier vazio.
+  const identificacao = usuario?.identificacao || "—";
 
   function handleSair(e) {
     e.preventDefault();

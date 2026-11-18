@@ -8,6 +8,7 @@ function Login() {
   const [password, setPassword] = useState("");
   const [erro, setErro] = useState(null);
   const { login } = useAuth();
+  
   const navigate = useNavigate();
 
   async function handleSubmit(e) {

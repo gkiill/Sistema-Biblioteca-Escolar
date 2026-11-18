@@ -15,9 +15,6 @@ const DOMINIOS = {
   "@prof.instituicao.edu.br": PERFIS.PROFESSOR,
 };
 
-// Chave usada para lembrar o login ao recarregar a página (F5)
-const CHAVE_STORAGE = "biblioteca:usuario";
-
 /** Descobre o perfil pelo final do e-mail. Retorna null se o domínio não for aceito. */
 export function descobrirPerfil(email = "") {
   const emailLimpo = email.trim().toLowerCase();
@@ -25,18 +22,23 @@ export function descobrirPerfil(email = "") {
   return dominio ? DOMINIOS[dominio] : null;
 }
 
-/** Normaliza os campos retornados pelo backend (role/documento -> perfil/identificacao). */
+/** Perfil informado pela API (campo perfil ou role). Só aceita valores conhecidos. */
+function perfilDaApi(u) {
+  const bruto = String(u.perfil || u.role || "").trim().toLowerCase();
+  if (bruto === "admin") return PERFIS.BIBLIOTECARIO;
+  return Object.values(PERFIS).includes(bruto) ? bruto : null;
+}
+
+/**
+ * Normaliza o usuário vindo do back-end.
+ * - perfil: o e-mail manda; se o domínio não for reconhecido, usa o da API.
+ * - identificacao: aceita identificacao, documento ou ra.
+ */
 function normalizarUsuario(u) {
   if (!u) return null;
-  const rawRole = u.perfil || u.role || "";
-  const perfil =
-    rawRole === "admin" || rawRole === PERFIS.BIBLIOTECARIO || u.email?.includes("admin")
-      ? PERFIS.BIBLIOTECARIO
-      : rawRole || descobrirPerfil(u.email) || PERFIS.ALUNO;
-
   return {
     ...u,
-    perfil,
+    perfil: descobrirPerfil(u.email) ?? perfilDaApi(u),
     identificacao: u.identificacao || u.documento || u.ra || "",
   };
 }
@@ -62,7 +64,6 @@ export function AuthProvider({ children }) {
       .catch((err) => {
         if (err.response?.status === 401) {
           localStorage.removeItem("token");
-          localStorage.removeItem(CHAVE_STORAGE);
         }
       })
       .finally(() => setCarregando(false));
@@ -70,10 +71,9 @@ export function AuthProvider({ children }) {
 
   async function login(email, password) {
     const { data } = await api.post("/login", { email, password });
-    const userNormalizado = normalizarUsuario(data.usuario || data);
+    // o e-mail digitado entra junto, para o perfil sair certo mesmo que a API não o devolva
+    setUsuario(normalizarUsuario({ email, ...(data.usuario || data) }));
     localStorage.setItem("token", data.token || "sessao_ativa");
-    localStorage.setItem(CHAVE_STORAGE, JSON.stringify(userNormalizado));
-    setUsuario(userNormalizado);
   }
 
   async function logout() {
@@ -83,7 +83,6 @@ export function AuthProvider({ children }) {
       // prossegue com logout local mesmo se a sessão já expirou
     } finally {
       localStorage.removeItem("token");
-      localStorage.removeItem(CHAVE_STORAGE);
       setUsuario(null);
     }
   }
