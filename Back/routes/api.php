@@ -7,7 +7,7 @@ use App\Http\Controllers\Api\CategoriaController;
 use App\Http\Controllers\Api\DevolucaoController;
 use App\Http\Controllers\Api\EmprestimoController;
 use App\Http\Controllers\Api\LivroController;
-use App\Http\Controllers\Api\UsuarioController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix("v1")->group(function () {
@@ -31,7 +31,7 @@ Route::prefix("v1")->group(function () {
     Route::apiResource("categorias", CategoriaController::class);
     Route::get("inventario/metricas", [LivroController::class, "metricasInventario"]);
     Route::apiResource("livros", LivroController::class);
-    Route::apiResource("usuarios", UsuarioController::class);
+    Route::apiResource("usuarios", UserController::class);
     Route::apiResource("emprestimos", EmprestimoController::class)->only([
         "index",
         "store",

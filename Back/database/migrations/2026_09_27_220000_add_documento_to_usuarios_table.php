@@ -9,15 +9,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('usuarios', function (Blueprint $table) {
-            $table->string('documento', 50)->nullable()->after('email');
-            $table->string('departamento', 150)->nullable()->after('perfil');
+            $table->string('document', 50)->nullable()->after('email');
+            $table->string('department', 150)->nullable()->after('profile');
         });
     }
 
     public function down(): void
     {
         Schema::table('usuarios', function (Blueprint $table) {
-            $table->dropColumn(['documento', 'departamento']);
+            $table->dropColumn(['document', 'department']);
         });
     }
 };

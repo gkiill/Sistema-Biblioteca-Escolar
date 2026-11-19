@@ -58,15 +58,15 @@ const INFO_PERFIL = {
 export default function Sidebar({ aberta, onFechar, fixa = false, children }) {
   const { usuario, logout } = useAuth();
 
-  // usuario.perfil já vem definido pelo AuthContext (domínio do e-mail)
-  const perfil = usuario?.perfil;
+  // usuario.role já vem definido pelo AuthContext (domínio do e-mail)
+  const perfil = usuario?.role;
   const itens =
     perfil === PERFIS.BIBLIOTECARIO ? MENU_BIBLIOTECARIO : MENU_LEITOR;
   const info = INFO_PERFIL[perfil] ?? INFO_PERFIL[PERFIS.ALUNO];
 
   // O AuthContext já junta identificacao/documento/ra em "identificacao".
   // "||" (e não "??") para mostrar "—" também quando vier vazio.
-  const identificacao = usuario?.identificacao || "—";
+  const identificacao = usuario?.document || "—";
 
   function handleSair(e) {
     e.preventDefault();

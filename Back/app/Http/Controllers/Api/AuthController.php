@@ -111,10 +111,10 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $user = Auth::user();
 
-            $usuarioLeitor = \App\Models\Usuario::where("email", $user->email)->first();
+            $usuarioLeitor = \App\Models\User::where("email", $user->email)->first();
             $role = $usuarioLeitor->perfil ?? (str_contains($user->email, "admin") ? "admin" : "aluno");
-            $documento = $usuarioLeitor->documento ?? "";
-            $departamento = $usuarioLeitor->departamento ?? ($role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas");
+            $document = $usuarioLeitor->document ?? "";
+            $department = $usuarioLeitor->department ?? ($role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas");
 
             return response()->json([
                 "mensagem" => "Login realizado com sucesso!",
@@ -123,8 +123,8 @@ class AuthController extends Controller
                     "name" => $user->name,
                     "email" => $user->email,
                     "role" => $role,
-                    "documento" => $documento,
-                    "departamento" => $departamento,
+                    "document" => $document,
+                    "department" => $department,
                 ],
             ]);
         }
@@ -170,10 +170,10 @@ class AuthController extends Controller
             );
         }
 
-        $usuarioLeitor = \App\Models\Usuario::where("email", $user->email)->first();
+        $usuarioLeitor = \App\Models\User::where("email", $user->email)->first();
         $role = $usuarioLeitor->perfil ?? (str_contains($user->email, "admin") ? "admin" : "aluno");
-        $documento = $usuarioLeitor->documento ?? "";
-        $departamento = $usuarioLeitor->departamento ?? ($role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas");
+        $document = $usuarioLeitor->document ?? "";
+        $department = $usuarioLeitor->department ?? ($role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas");
 
         return response()->json([
             "autenticado" => true,
@@ -182,8 +182,8 @@ class AuthController extends Controller
                 "name" => $user->name,
                 "email" => $user->email,
                 "role" => $role,
-                "documento" => $documento,
-                "departamento" => $departamento,
+                "document" => $document,
+                "department" => $department,
             ],
         ]);
     }
