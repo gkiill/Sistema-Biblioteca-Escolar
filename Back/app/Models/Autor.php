@@ -10,15 +10,15 @@ class Autor extends Model
 {
     use HasFactory;
 
-    protected $table = 'autores';
+    protected $table = 'author';
 
     protected $fillable = [
-        'nome',
-        'biografia',
+        'name',
+        'biography',
     ];
 
     public function livros(): HasMany
     {
-        return $this->hasMany(Livro::class, 'autor_id');
+        return $this->hasMany(book::class, 'authr_id');
     }
 }

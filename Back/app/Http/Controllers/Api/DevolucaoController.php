@@ -12,14 +12,14 @@ class DevolucaoController extends Controller
     {
         $emprestimo = Emprestimo::findOrFail($id);
 
-        if ($emprestimo->data_devolucao_real !== null) {
+        if ($emprestimo->return_date !== null) {
             return response()->json([
                 'erro' => 'Este empréstimo já foi devolvido anteriormente.',
             ], 422);
         }
 
         $emprestimo->update([
-            'data_devolucao_real' => now()->toDateString(),
+            'return_date' => now()->toDateString(),
             'status' => 'devolvido',
         ]);
 

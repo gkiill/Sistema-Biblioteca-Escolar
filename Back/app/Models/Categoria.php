@@ -10,15 +10,15 @@ class Categoria extends Model
 {
     use HasFactory;
 
-    protected $table = 'categorias';
+    protected $table = 'category';
 
     protected $fillable = [
-        'nome',
-        'descricao',
+        'name',
+        'description',
     ];
 
     public function livros(): BelongsToMany
     {
-        return $this->belongsToMany(Livro::class, 'categoria_livro');
+        return $this->belongsToMany(Livro::class, 'book_category', 'category_id', 'book_id');
     }
 }

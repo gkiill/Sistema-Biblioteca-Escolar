@@ -11,14 +11,14 @@ class CategoriaController extends Controller
 {
     public function index(): JsonResponse
     {
-        $categorias = Categoria::withCount("livros")->orderBy("nome")->get();
+        $categorias = Categoria::withCount("book")->orderBy("name")->get();
         return response()->json($categorias);
     }
 
     public function store(Request $request): JsonResponse
     {
         $dados = $request->validate([
-            "nome" => "required|string|max:100|unique:categorias,nome",
+            "name" => "required|string|max:100|unique:categorias,name",
             "descricao" => "nullable|string|max:255",
         ]);
 
@@ -43,8 +43,8 @@ class CategoriaController extends Controller
     {
         $categoria = Categoria::findOrFail($id);
         $dados = $request->validate([
-            "nome" =>
-                "sometimes|required|string|max:100|unique:categorias,nome," .
+            "name" =>
+                "sometimes|required|string|max:100|unique:categorias,name," .
                 $id,
             "descricao" => "nullable|string|max:255",
         ]);

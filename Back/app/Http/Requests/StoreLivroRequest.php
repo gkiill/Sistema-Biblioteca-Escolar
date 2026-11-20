@@ -15,47 +15,46 @@ class StoreLivroRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "titulo" => ["required", "string", "max:255"],
+            "title" => ["required", "string", "max:255"],
             "isbn" => [
                 "required",
                 "string",
-                "unique:livros,isbn",
+                "unique:book,isbn",
                 new IsbnValido(),
             ],
-            "ano_publicacao" => [
+            "year" => [
                 "nullable",
                 "integer",
                 "min:1000",
                 "max:" . (date("Y") + 1),
             ],
-            "sinopse" => ["nullable", "string"],
-            "capa_url" => ["nullable", "url", "max:500"],
-            "quantidade" => ["nullable", "integer", "min:1"],
-            "autor_id" => [
-                "required_without:autor_nome",
+            "synopsis" => ["nullable", "string"],
+            "amount" => ["nullable", "integer", "min:1"],
+            "author_id" => [
+                "required_without:author_name",
                 "nullable",
-                "exists:autores,id",
+                "exists:author,id",
             ],
-            "autor_nome" => [
-                "required_without:autor_id",
+            "author_name" => [
+                "required_without:author_id",
                 "nullable",
                 "string",
                 "max:255",
             ],
-            "categorias" => ["nullable", "array"],
-            "categorias.*" => ["exists:categorias,id"],
+            "categories" => ["nullable", "array"],
+            "categories.*" => ["exists:category,id"],
         ];
     }
 
     public function messages(): array
     {
         return [
-            "titulo.required" => "O título do livro é obrigatório.",
+            "title.required" => "O título do livro é obrigatório.",
             "isbn.required" => "O ISBN é obrigatório.",
             "isbn.unique" => "Já existe um livro cadastrado com este ISBN.",
-            "autor_id.required" => "O autor é obrigatório.",
-            "autor_id.exists" => "Selecione um autor válido existente.",
-            "categorias.*.exists" =>
+            "author_id.required" => "O autor é obrigatório.",
+            "author_id.exists" => "Selecione um autor válido existente.",
+            "categories.*.exists" =>
                 "Uma ou mais categorias informadas não existem.",
         ];
     }

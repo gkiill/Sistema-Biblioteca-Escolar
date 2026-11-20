@@ -18,15 +18,14 @@ class UpdateLivroRequest extends FormRequest
         $livroId = $this->route('livro')?->id ?? $this->route('livro');
 
         return [
-            'titulo' => ['sometimes', 'required', 'string', 'max:255'],
-            'isbn' => ['sometimes', 'required', 'string', Rule::unique('livros', 'isbn')->ignore($livroId), new IsbnValido()],
-            'ano_publicacao' => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
-            'sinopse' => ['nullable', 'string'],
-            'capa_url' => ['nullable', 'url', 'max:500'],
-            'quantidade' => ['nullable', 'integer', 'min:0'],
-            'autor_id' => ['sometimes', 'required', 'exists:autores,id'],
-            'categorias' => ['nullable', 'array'],
-            'categorias.*' => ['exists:categorias,id'],
+            'title' => ['sometimes', 'required', 'string', 'max:255'],
+            'isbn' => ['sometimes', 'required', 'string', Rule::unique('book', 'isbn')->ignore($livroId), new IsbnValido()],
+            'year' => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
+            'synopsis' => ['nullable', 'string'],
+            'amount' => ['nullable', 'integer', 'min:0'],
+            'author_id' => ['sometimes', 'required', 'exists:author,id'],
+            'categories' => ['nullable', 'array'],
+            'categories.*' => ['exists:category,id'],
         ];
     }
 
@@ -34,7 +33,7 @@ class UpdateLivroRequest extends FormRequest
     {
         return [
             'isbn.unique' => 'Já existe um livro cadastrado com este ISBN.',
-            'autor_id.exists' => 'Selecione um autor válido existente.',
+            'author_id.exists' => 'Selecione um autor válido existente.',
         ];
     }
 }

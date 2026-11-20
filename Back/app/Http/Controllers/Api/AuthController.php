@@ -111,10 +111,9 @@ class AuthController extends Controller
             $request->session()->regenerate();
             $user = Auth::user();
 
-            $usuarioLeitor = \App\Models\User::where("email", $user->email)->first();
-            $role = $usuarioLeitor->perfil ?? (str_contains($user->email, "admin") ? "admin" : "aluno");
-            $document = $usuarioLeitor->document ?? "";
-            $department = $usuarioLeitor->department ?? ($role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas");
+            $role = $user->profile ?: "aluno";
+            $document = $user->document ?? "";
+            $department = $role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas";
 
             return response()->json([
                 "mensagem" => "Login realizado com sucesso!",
@@ -170,10 +169,9 @@ class AuthController extends Controller
             );
         }
 
-        $usuarioLeitor = \App\Models\User::where("email", $user->email)->first();
-        $role = $usuarioLeitor->perfil ?? (str_contains($user->email, "admin") ? "admin" : "aluno");
-        $document = $usuarioLeitor->document ?? "";
-        $department = $usuarioLeitor->department ?? ($role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas");
+        $role = $user->profile ?: "aluno";
+        $document = $user->document ?? "";
+        $department = $role === "professor" ? "Corpo Docente" : "Análise e Desenvolvimento de Sistemas";
 
         return response()->json([
             "autenticado" => true,

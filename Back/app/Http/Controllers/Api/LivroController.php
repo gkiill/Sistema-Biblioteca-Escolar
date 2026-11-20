@@ -16,35 +16,35 @@ class LivroController extends Controller
         $query = Livro::with(["autor", "categorias"])
             ->withCount([
                 "emprestimos as emprestimos_ativos_count" => function ($q) {
-                    $q->whereNull("data_devolucao_real");
+                    $q->whereNull("return_date");
                 },
             ]);
 
         if ($busca = $request->query("busca")) {
             $query->where(function ($q) use ($busca) {
-                $q->where("titulo", "like", "%{$busca}%")
+                $q->where("title", "like", "%{$busca}%")
                     ->orWhere("isbn", "like", "%{$busca}%")
                     ->orWhereHas("autor", function ($sub) use ($busca) {
-                        $sub->where("nome", "like", "%{$busca}%");
+                        $sub->where("name", "like", "%{$busca}%");
                     });
             });
         }
 
-        if ($categoriaId = $request->query("categoria_id")) {
+        if ($categoriaId = $request->query("category_id")) {
             $query->whereHas("categorias", function ($q) use ($categoriaId) {
-                $q->where("categorias.id", $categoriaId);
+                $q->where("category.id", $categoriaId);
             });
         }
 
         if ($status = $request->query("status")) {
             if ($status === "disponivel") {
-                $query->whereRaw("quantidade > (SELECT count(*) FROM emprestimos WHERE emprestimos.livro_id = livros.id AND data_devolucao_real IS NULL)");
+                $query->whereRaw("amount > (SELECT count(*) FROM loan WHERE loan.book_id = book.id AND return_date IS NULL)");
             } elseif ($status === "emprestado") {
-                $query->whereRaw("(SELECT count(*) FROM emprestimos WHERE emprestimos.livro_id = livros.id AND data_devolucao_real IS NULL) > 0");
+                $query->whereRaw("(SELECT count(*) FROM loan WHERE loan.book_id = book.id AND return_date IS NULL) > 0");
             }
         }
 
-        $campoOrdenacao = $request->query("ordenar", "titulo");
+        $campoOrdenacao = $request->query("ordenar", "title");
         $direcao = $request->query("direcao", "asc");
         $query->orderBy($campoOrdenacao, $direcao);
 
@@ -58,11 +58,11 @@ class LivroController extends Controller
      */
     public function metricasInventario(): JsonResponse
     {
-        $totalExemplares = (int) Livro::sum("quantidade");
+        $totalExemplares = (int) Livro::sum("amount");
         $totalTitulos = Livro::count();
-        $emprestimosAtivos = \App\Models\Emprestimo::whereNull("data_devolucao_real")->count();
-        $atrasados = \App\Models\Emprestimo::whereNull("data_devolucao_real")
-            ->where("data_devolucao_prevista", "<", now()->toDateString())
+        $emprestimosAtivos = \App\Models\Emprestimo::whereNull("return_date")->count();
+        $atrasados = \App\Models\Emprestimo::whereNull("return_date")
+            ->where("expected_return_date", "<", now()->toDateString())
             ->count();
         $disponiveis = max(0, $totalExemplares - $emprestimosAtivos);
         $percentualDisponivel = $totalExemplares > 0 ? round(($disponiveis / $totalExemplares) * 100) : 0;
@@ -80,17 +80,17 @@ class LivroController extends Controller
     public function store(StoreLivroRequest $request): JsonResponse
     {
         $dados = $request->validated();
-        $categorias = $dados["categorias"] ?? [];
-        unset($dados["categorias"]);
+        $categorias = $dados["categories"] ?? [];
+        unset($dados["categories"]);
 
         // Se veio o nome do autor pela busca da API, localiza ou cria o autor no banco
-        if (!empty($dados["autor_nome"]) && empty($dados["autor_id"])) {
-            $autor = \App\Models\Autor::firstOrCreate([
-                "nome" => trim($dados["autor_nome"]),
+        if (!empty($dados["author_name"]) && empty($dados["author_id"])) {
+            $author = \App\Models\Autor::firstOrCreate([
+                "name" => trim($dados["author_name"]),
             ]);
-            $dados["autor_id"] = $autor->id;
+            $dados["author_id"] = $author->id;
         }
-        unset($dados["autor_nome"]);
+        unset($dados["author_name"]);
 
         $livro = Livro::create($dados);
 
@@ -125,9 +125,9 @@ class LivroController extends Controller
         $livro = Livro::findOrFail($id);
         $dados = $request->validated();
 
-        if (array_key_exists("categorias", $dados)) {
-            $livro->categorias()->sync($dados["categorias"] ?? []);
-            unset($dados["categorias"]);
+        if (array_key_exists("categories", $dados)) {
+            $livro->categorias()->sync($dados["categories"] ?? []);
+            unset($dados["categories"]);
         }
 
         $livro->update($dados);

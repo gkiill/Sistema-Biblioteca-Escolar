@@ -12,30 +12,29 @@ class Livro extends Model
 {
     use HasFactory;
 
-    protected $table = 'livros';
+    protected $table = 'book';
 
     protected $fillable = [
-        'titulo',
+        'title',
         'isbn',
-        'ano_publicacao',
-        'sinopse',
-        'capa_url',
-        'quantidade',
-        'autor_id',
+        'year',
+        'synopsis',
+        'amount',
+        'author_id',
     ];
 
     public function autor(): BelongsTo
     {
-        return $this->belongsTo(Autor::class, 'autor_id');
+        return $this->belongsTo(Autor::class, 'author_id');
     }
 
     public function categorias(): BelongsToMany
     {
-        return $this->belongsToMany(Categoria::class, 'categoria_livro');
+        return $this->belongsToMany(Categoria::class, 'book_category', 'book_id', 'category_id');
     }
 
     public function emprestimos(): HasMany
     {
-        return $this->hasMany(Emprestimo::class, 'livro_id');
+        return $this->hasMany(Emprestimo::class, 'book_id');
     }
 }

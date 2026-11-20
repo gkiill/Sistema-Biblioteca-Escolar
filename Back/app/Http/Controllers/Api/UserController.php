@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index(): JsonResponse
     {
-        $usuarios = User::orderBy("nome")->get();
+        $usuarios = User::orderBy("name")->get();
         return response()->json($usuarios);
     }
 
@@ -27,7 +27,7 @@ class UserController extends Controller
         
         $dados = $request->validate([
             "name" => "sometimes|required|string|max:255",
-            "email" => "sometimes|required|email|unique:usuarios,email," . $id,
+            "email" => "sometimes|required|email|unique:users,email," . $id,
             "profile" => "nullable|string|in:aluno,professor,bibliotecario",
             "status" => "nullable|string|in:ativo,inativo",
             "document" => "nullable|string|max:50",

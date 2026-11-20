@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Emprestimo;
 use App\Models\Livro;
-use App\Models\Usuario;
+use App\Models\User;
 use App\Services\EmprestimoService;
 use Exception;
 use Illuminate\Http\JsonResponse;
@@ -15,7 +15,7 @@ class EmprestimoController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $query = Emprestimo::with(['livro.autor', 'usuario'])->latest('data_emprestimo');
+        $query = Emprestimo::with(['livro.autor', 'usuario'])->latest('loan_date');
 
         if ($status = $request->query('status')) {
             $query->where('status', $status);
@@ -29,12 +29,12 @@ class EmprestimoController extends Controller
     public function store(Request $request, EmprestimoService $service): JsonResponse
     {
         $dados = $request->validate([
-            'livro_id' => 'required|exists:livros,id',
-            'usuario_id' => 'required|exists:usuarios,id',
+            'book_id' => 'required|exists:book,id',
+            'user_id' => 'required|exists:users,id',
         ]);
 
-        $livro = Livro::findOrFail($dados['livro_id']);
-        $usuario = Usuario::findOrFail($dados['usuario_id']);
+        $livro = Livro::findOrFail($dados['book_id']);
+        $usuario = User::findOrFail($dados['user_id']);
 
         try {
             $emprestimo = $service->registrar($livro, $usuario);

@@ -10,30 +10,30 @@ class Emprestimo extends Model
 {
     use HasFactory;
 
-    protected $table = 'emprestimos';
+    protected $table = 'loan';
 
     protected $fillable = [
-        'livro_id',
-        'usuario_id',
-        'data_emprestimo',
-        'data_devolucao_prevista',
-        'data_devolucao_real',
+        'book_id',
+        'user_id',
+        'loan_date',
+        'expected_return_date',
+        'return_date',
         'status',
     ];
 
     protected $casts = [
-        'data_emprestimo' => 'date',
-        'data_devolucao_prevista' => 'date',
-        'data_devolucao_real' => 'date',
+        'loan_date' => 'date',
+        'expected_return_date' => 'date',
+        'return_date' => 'date',
     ];
 
     public function livro(): BelongsTo
     {
-        return $this->belongsTo(Livro::class, 'livro_id');
+        return $this->belongsTo(Livro::class, 'book_id');
     }
 
     public function usuario(): BelongsTo
     {
-        return $this->belongsTo(Usuario::class, 'usuario_id');
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

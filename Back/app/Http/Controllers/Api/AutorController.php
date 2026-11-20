@@ -11,15 +11,15 @@ class AutorController extends Controller
 {
     public function index(): JsonResponse
     {
-        $autores = Autor::withCount("livros")->orderBy("nome")->get();
+        $autores = Autor::withCount("book")->orderBy("name")->get();
         return response()->json($autores);
     }
 
     public function store(Request $request): JsonResponse
     {
         $dados = $request->validate([
-            "nome" => "required|string|max:255",
-            "biografia" => "nullable|string",
+            "name" => "required|string|max:255",
+            "biography" => "nullable|string",
         ]);
 
         $autor = Autor::create($dados);
@@ -43,8 +43,8 @@ class AutorController extends Controller
     {
         $autor = Autor::findOrFail($id);
         $dados = $request->validate([
-            "nome" => "sometimes|required|string|max:255",
-            "biografia" => "nullable|string",
+            "name" => "sometimes|required|string|max:255",
+            "biography" => "nullable|string",
         ]);
 
         $autor->update($dados);

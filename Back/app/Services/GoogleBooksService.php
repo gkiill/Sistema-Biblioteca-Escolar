@@ -246,7 +246,7 @@ class GoogleBooksService
         $livros = $this->buscarPorTexto($termo, $limit);
         $importados = 0;
 
-        $categoria = \App\Models\Categoria::firstOrCreate(['nome' => $categoriaNome]);
+        $categoria = \App\Models\Categoria::firstOrCreate(['name' => $categoriaNome]);
 
         foreach ($livros as $item) {
             if (empty($item['titulo']) || empty($item['capa_url'])) {
@@ -254,25 +254,24 @@ class GoogleBooksService
             }
 
             $autor = \App\Models\Autor::firstOrCreate(
-                ['nome' => $item['autor']],
-                ['biografia' => 'Autor importado via integração com Open Library API.']
+                ['name' => $item['autor']],
+                ['biography' => 'Autor importado via integração com Open Library API.']
             );
 
             $isbn = $item['isbn'] ?? ('978' . str_pad((string) abs(crc32($item['titulo'])), 10, '0', STR_PAD_LEFT));
 
             $livro = \App\Models\Livro::firstOrCreate(
-                ['titulo' => $item['titulo']],
+                ['title' => $item['titulo']],
                 [
                     'isbn' => $isbn,
-                    'ano_publicacao' => $item['ano_publicacao'] ?? date('Y'),
-                    'sinopse' => "Obra do acervo internacional sobre {$termo}.",
-                    'capa_url' => $item['capa_url'],
-                    'quantidade' => rand(2, 6),
-                    'autor_id' => $autor->id,
+                    'year' => $item['ano_publicacao'] ?? date('Y'),
+                    'synopsis' => "Obra do acervo internacional sobre {$termo}.",
+                    'amount' => rand(2, 6),
+                    'author_id' => $autor->id,
                 ]
             );
 
-            if (!$livro->categorias()->where('categoria_id', $categoria->id)->exists()) {
+            if (!$livro->categorias()->where('category_id', $categoria->id)->exists()) {
                 $livro->categorias()->attach($categoria->id);
             }
 
