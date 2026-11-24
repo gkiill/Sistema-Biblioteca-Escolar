@@ -88,21 +88,26 @@ function Emprestimo() {
     setStatus("loading");
 
     try {
-      // TODO: troque pela chamada real ao seu back-end, por exemplo:
-      // const res = await fetch("/api/emprestimos", {
-      //   method: "POST",
-      //   headers: { "Content-Type": "application/json" },
-      //   body: JSON.stringify({ ...form, autoRenew }),
-      // });
-      // if (!res.ok) throw new Error("Erro ao registrar empréstimo");
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const res = await fetch("/api/v1/emprestimos", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        credentials: "include",
+        body: JSON.stringify({ ...form, autoRenew }),
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.erro || errData.message || "Erro ao registrar empréstimo");
+      }
 
       setConfirmedReturnDate(formatDateBR(form.returnDate));
       setStatus("success");
     } catch (err) {
       console.error(err);
       setStatus(null);
-      alert("Não foi possível registrar o empréstimo. Tente novamente.");
+      alert(err.message || "Não foi possível registrar o empréstimo. Tente novamente.");
     }
   };
 

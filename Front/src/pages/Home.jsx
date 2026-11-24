@@ -1,48 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth, PERFIS } from "../context/AuthContext";
 import LivroCard from "../components/LivroCard";
+import api from "../services/api";
 
-// Livros de "Recomendações para você" (depois podem vir da API)
-const LIVROS_RECOMENDADOS = [
+// Fallback local apenas se a API estiver offline
+const LIVROS_RECOMENDADOS_FALLBACK = [
   {
-    id: "harry-potter",
-    titulo: "Harry Potter e o Cálice de fogo",
-    autor: "J.K Rowling",
-    status: "emprestado", // 'disponivel' ou 'emprestado'
-    capa: "https://m.media-amazon.com/images/I/81S88mY0eaL._AC_UF1000,1000_QL80_.jpg",
-    tags: ["Ficção"],
-  },
-  {
-    id: "ux-design",
-    titulo: "UX Design",
-    autor: "Will Grant",
+    id: 1,
+    titulo: "Código Limpo",
+    autor: "Robert C. Martin",
+    isbn: "9788576082675",
     status: "disponivel",
-    capa: "https://m.media-amazon.com/images/I/6113p03+Y6L._AC_UF1000,1000_QL80_.jpg",
-    tags: ["Design", "UX", "Acadêmico"],
+    tags: ["Engenharia de Software"],
   },
   {
-    id: "um-de-nos-esta-mentindo",
-    titulo: "Um de nós está mentindo",
-    autor: "Karen McManus",
+    id: 20,
+    titulo: "1984",
+    autor: "George Orwell",
+    isbn: "9788535914849",
     status: "disponivel",
-    capa: "https://m.media-amazon.com/images/I/71N15Eit3ML._AC_UF1000,1000_QL80_.jpg",
-    tags: ["Mistério", "Suspense"],
-  },
-  {
-    id: "logica-programacao",
-    titulo: "Lógica de programação...",
-    autor: "Raphael R",
-    status: "disponivel",
-    capa: "https://m.media-amazon.com/images/I/71+y-f3IOfL._AC_UF1000,1000_QL80_.jpg",
-    tags: ["Design", "UX", "Acadêmico"],
-  },
-  {
-    id: "manual-de-assassinato",
-    titulo: "Manual de assassinato...",
-    autor: "Holly Jackson",
-    status: "emprestado",
-    capa: "https://m.media-amazon.com/images/I/81180N97m0L._AC_UF1000,1000_QL80_.jpg",
     tags: ["Ficção"],
   },
 ];
@@ -203,6 +180,31 @@ function HomeBibliotecario() {
 }
 
 function HomeAcademico() {
+  const [livros, setLivros] = useState(LIVROS_RECOMENDADOS_FALLBACK);
+  const [busca, setBusca] = useState("");
+
+  useEffect(() => {
+    let ativo = true;
+    const params = busca.trim()
+      ? `/livros?per_page=8&busca=${encodeURIComponent(busca.trim())}`
+      : "/livros?per_page=8";
+
+    api
+      .get(params)
+      .then(({ data }) => {
+        if (!ativo) return;
+        const lista = Array.isArray(data) ? data : data?.data ?? [];
+        if (lista.length > 0 || busca.trim()) {
+          setLivros(lista);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      ativo = false;
+    };
+  }, [busca]);
+
   const openModal = (id) => {
     document.getElementById(id)?.classList.add("active");
     document.getElementById("overlay")?.classList.add("active");
@@ -217,8 +219,6 @@ function HomeAcademico() {
     document.querySelectorAll(".modal").forEach((m) => m.classList.remove("active"));
     document.getElementById("overlay")?.classList.remove("active");
   };
-
-  const filterBooks = () => {};
 
   return (
     <div>
@@ -238,7 +238,8 @@ function HomeAcademico() {
                 type="text"
                 id="searchInput"
                 placeholder="Pesquise por livro, autores, ISBN..."
-                onKeyUp={filterBooks}
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
               />
             </div>
             <button
@@ -260,7 +261,7 @@ function HomeAcademico() {
           </div>
 
           <div className="books-grid" id="booksGrid">
-            {LIVROS_RECOMENDADOS.map((livro) => (
+            {livros.map((livro) => (
               <LivroCard key={livro.id} livro={livro} />
             ))}
           </div>

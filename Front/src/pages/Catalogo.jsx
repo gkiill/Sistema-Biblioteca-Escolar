@@ -1,62 +1,48 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import LivroCard from "../components/LivroCard";
 import Paginacao from "../components/Paginacao";
+import api from "../services/api";
 
 function Catalogo() {
-  const { user } = useAuth();
+  const { usuario } = useAuth();
 
-  // Array estruturado com múltiplos livros e suas respectivas páginas, categorias e status
-  const [livros] = useState([
-    {
-      id: "harry-potter",
-      titulo: "Harry Potter e o Cálice de fogo",
-      isbn: "9788532530780",
-      autor: "J.K Rowling",
-      categoria: "ficcao",
-      status: "emprestado", // 'disponivel' ou 'emprestado'
-      tags: ["Ficção"],
-      pagina: "1",
-    },
-    {
-      id: "ux-design",
-      titulo: "UX Design",
-      isbn: "9788575227763",
-      autor: "Will Grant",
-      categoria: "design",
-      status: "disponivel", // 'disponivel' ou 'emprestado'
-      tags: ["Ficção"],
-      pagina: "1",
-    },
-    {
-      id: "um-de-nos-esta-mentindo",
-      titulo: "Um de nós está mentindo",
-      isbn: "9788551001550",
-      autor: "Karen McManus",
-      categoria: "misterio",
-      status: "disponivel",
-      tags: ["Mistério", "Suspense"],
-      pagina: "2",
-    },
-    {
-      id: "logica-programacao",
-      titulo: "Lógica de programação...",
-      isbn: "9788575227763",
-      autor: "Raphael R",
-      categoria: "design",
-      status: "disponivel",
-      tags: ["Design", "UX", "Acadêmico"],
-      pagina: "3",
-    },
-  ]);
-
-  // Paginação: cada livro diz em qual página aparece (campo "pagina")
+  const [livros, setLivros] = useState([]);
   const [paginaAtual, setPaginaAtual] = useState(1);
-  const totalPaginas = Math.max(1, ...livros.map((l) => Number(l.pagina) || 1));
-  const livrosDaPagina = livros.filter(
-    (l) => (Number(l.pagina) || 1) === paginaAtual,
-  );
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [busca, setBusca] = useState("");
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    let ativo = true;
+    setCarregando(true);
+    const params = new URLSearchParams();
+    params.set("page", String(paginaAtual));
+    params.set("per_page", "8");
+    if (busca.trim()) params.set("busca", busca.trim());
+
+    api
+      .get(`/livros?${params.toString()}`)
+      .then(({ data }) => {
+        if (!ativo) return;
+        const lista = Array.isArray(data) ? data : data?.data ?? [];
+        setLivros(lista);
+        setTotalPaginas(data?.last_page ?? 1);
+      })
+      .catch(() => {
+        if (ativo) setLivros([]);
+      })
+      .finally(() => {
+        if (ativo) setCarregando(false);
+      });
+
+    return () => {
+      ativo = false;
+    };
+  }, [paginaAtual, busca]);
+
+  const livrosDaPagina = livros;
 
   const closeAllOverlays = () => {
     const overlay = document.getElementById("overlay");
@@ -75,21 +61,9 @@ function Catalogo() {
     }
   };
 
-  const filterBooks = () => {
-    const searchTerm =
-      document.getElementById("searchInput")?.value.toLowerCase() || "";
-    const cards = document.querySelectorAll(".book-card");
-
-    cards.forEach((card) => {
-      const title = card.querySelector("h3")?.textContent.toLowerCase() || "";
-      const author =
-        card.querySelector(".author")?.textContent.toLowerCase() || "";
-      if (title.includes(searchTerm) || author.includes(searchTerm)) {
-        card.style.display = "flex";
-      } else {
-        card.style.display = "none";
-      }
-    });
+  const handleBuscaChange = (e) => {
+    setBusca(e.target.value);
+    setPaginaAtual(1);
   };
 
   const openModal = (modalId) => {
@@ -155,7 +129,8 @@ function Catalogo() {
                 type="text"
                 id="searchInput"
                 placeholder="Pesquise por livro, autores, ISBN..."
-                onKeyUp={filterBooks}
+                value={busca}
+                onChange={handleBuscaChange}
               />
             </div>
             <button

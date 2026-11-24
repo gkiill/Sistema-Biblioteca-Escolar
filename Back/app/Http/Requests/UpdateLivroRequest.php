@@ -2,38 +2,4 @@
 
 namespace App\Http\Requests;
 
-use App\Rules\IsbnValido;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
-
-class UpdateLivroRequest extends FormRequest
-{
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    public function rules(): array
-    {
-        $livroId = $this->route('livro')?->id ?? $this->route('livro');
-
-        return [
-            'title' => ['sometimes', 'required', 'string', 'max:255'],
-            'isbn' => ['sometimes', 'required', 'string', Rule::unique('book', 'isbn')->ignore($livroId), new IsbnValido()],
-            'year' => ['nullable', 'integer', 'min:1000', 'max:' . (date('Y') + 1)],
-            'synopsis' => ['nullable', 'string'],
-            'amount' => ['nullable', 'integer', 'min:0'],
-            'author_id' => ['sometimes', 'required', 'exists:author,id'],
-            'categories' => ['nullable', 'array'],
-            'categories.*' => ['exists:category,id'],
-        ];
-    }
-
-    public function messages(): array
-    {
-        return [
-            'isbn.unique' => 'Já existe um livro cadastrado com este ISBN.',
-            'author_id.exists' => 'Selecione um autor válido existente.',
-        ];
-    }
-}
+class UpdateLivroRequest extends UpdateBookRequest {}

@@ -14,9 +14,13 @@ class AuthController extends Controller
      */
     public function register(Request $request): JsonResponse
     {
-        // Normaliza o e-mail em minúsculas e sem espaços
+        // Normaliza campos aceitando o padrao do front (documento, role) e ingles (document, profile)
         $email = strtolower(trim((string) $request->input("email", "")));
-        $request->merge(["email" => $email]);
+        $request->merge([
+            "email" => $email,
+            "document" => $request->input("document", $request->input("documento")),
+            "profile" => $request->input("profile", $request->input("role", "aluno")),
+        ]);
 
         // Verifica unicidade antes mesmo das outras validações para mensagem amigável
         if (\App\Models\User::whereRaw("LOWER(email) = ?", [$email])->exists()) {
@@ -34,36 +38,26 @@ class AuthController extends Controller
             "email" => "required|email|max:255|unique:users,email",
             "password" => "required|string|min:6",
             "profile" => "nullable|string|in:aluno,professor,bibliotecario",
-            "document" => "required|string|max:50",
+            "document" => "required|string|min:4|max:50",
         ]);
 
-        $profile = $dados["profile"] ?? "aluno";
+        $profile = $dados["profile"] ?: "aluno";
         $document = trim($dados["document"]);
 
-        // Validação e formatação específica por perfil (CPF para professor, RA para aluno)
-        if ($profile === "aluno") {
-            // Aluno: RA numérico ou alfanumérico
-            if (strlen($document) != 6) {
-                return response()->json(
-                    [
-                        "message" => "O RA informado é inválido. Digite um RA válido com 6 dígitos.",
-                        "errors" => ["document" => ["RA inválido."]],
-                    ],
-                    422,
-                );
-            }
-        } else {
-            $document = preg_replace("/\D/", "", $document);
-            if (!$this->validarCpf($document)) {
-                return response()->json(
-                    [
-                        "message" => "O CPF informado é inválido. Digite um CPF válido com 11 dígitos.",
-                        "errors" => ["document" => ["CPF inválido."]],
-                    ],
-                    422,
-                );
-            }
+        // Validacao flexivel seguindo o padrao do front (RA para aluno, Registro/ID ou CPF para professor)
+        $docLimpo = preg_replace("/[^a-zA-Z0-9]/", "", $document);
+        if (strlen($docLimpo) < 4 || strlen($docLimpo) > 14) {
+            return response()->json(
+                [
+                    "message" => $profile === "aluno"
+                        ? "O RA informado é inválido. Digite entre 4 e 12 caracteres."
+                        : "O Registro/ID informado é inválido. Digite entre 4 e 14 caracteres.",
+                    "errors" => ["document" => ["Documento inválido."]],
+                ],
+                422,
+            );
         }
+        $document = $docLimpo;
 
         $user = \App\Models\User::create([
             "name" => trim($dados["name"]),

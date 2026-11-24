@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import api from "../services/api";
+import { resolverCapaLivro } from "../components/LivroCard";
 
 /* Rotas do Laravel usadas nesta página.
    - listar: já existe no api.php (GET emprestimos).
@@ -62,14 +63,20 @@ function simplificar(texto = "") {
  * Se a sua API usa outros nomes de campo, ajuste SÓ aqui.
  */
 function normalizarEmprestimo(e, hoje) {
-  const livro = e.livro ?? {};
+  const livro = e.book ?? e.livro ?? {};
   const inicioHoje = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate());
 
   const statusBruto = String(e.status ?? e.situacao ?? "").toLowerCase();
-  const devolvido = statusBruto.includes("devolv");
+  const devolvido = statusBruto.includes("devolv") || Boolean(e.return_date);
 
-  const retirada = paraData(e.data_retirada ?? e.dataRetirada);
-  const devolucao = paraData(e.data_devolucao ?? e.dataDevolucao);
+  const retirada = paraData(e.loan_date ?? e.data_emprestimo ?? e.data_retirada ?? e.dataRetirada);
+  const devolucao = paraData(
+    (devolvido ? e.return_date : null) ??
+      e.expected_return_date ??
+      e.data_devolucao_prevista ??
+      e.data_devolucao ??
+      e.dataDevolucao,
+  );
 
   // dias de atraso: usa o que a API mandou; se não mandou, calcula pela data
   let diasAtraso = 0;
@@ -81,12 +88,14 @@ function normalizarEmprestimo(e, hoje) {
     }
   }
 
+  const { primary: capaResolvida } = resolverCapaLivro(livro);
+
   return {
     id: e.id,
-    isbn: livro.isbn ?? e.isbn ?? e.livro_isbn ?? e.livro_id,
-    titulo: livro.titulo ?? e.titulo ?? "Livro sem título",
-    autor: livro.autor?.nome ?? livro.autor ?? e.autor ?? "",
-    capa: livro.capa_url ?? livro.capa ?? e.capa_url ?? e.capa ?? null,
+    isbn: livro.isbn ?? e.isbn ?? e.livro_isbn ?? e.book_id ?? e.livro_id,
+    titulo: livro.title ?? livro.titulo ?? e.titulo ?? "Livro sem título",
+    autor: livro.author?.name ?? livro.autor?.nome ?? livro.author ?? livro.autor ?? e.author ?? e.autor ?? "",
+    capa: livro.capa_url ?? livro.capa ?? e.capa_url ?? e.capa ?? capaResolvida ?? null,
     retirada,
     devolucao,
     devolvido,

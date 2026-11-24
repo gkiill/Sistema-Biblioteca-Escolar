@@ -246,21 +246,21 @@ class GoogleBooksService
         $livros = $this->buscarPorTexto($termo, $limit);
         $importados = 0;
 
-        $categoria = \App\Models\Categoria::firstOrCreate(['name' => $categoriaNome]);
+        $categoria = \App\Models\Category::firstOrCreate(['name' => $categoriaNome]);
 
         foreach ($livros as $item) {
             if (empty($item['titulo']) || empty($item['capa_url'])) {
                 continue;
             }
 
-            $autor = \App\Models\Autor::firstOrCreate(
+            $autor = \App\Models\Author::firstOrCreate(
                 ['name' => $item['autor']],
                 ['biography' => 'Autor importado via integração com Open Library API.']
             );
 
             $isbn = $item['isbn'] ?? ('978' . str_pad((string) abs(crc32($item['titulo'])), 10, '0', STR_PAD_LEFT));
 
-            $livro = \App\Models\Livro::firstOrCreate(
+            $livro = \App\Models\Book::firstOrCreate(
                 ['title' => $item['titulo']],
                 [
                     'isbn' => $isbn,
@@ -271,8 +271,8 @@ class GoogleBooksService
                 ]
             );
 
-            if (!$livro->categorias()->where('category_id', $categoria->id)->exists()) {
-                $livro->categorias()->attach($categoria->id);
+            if (!$livro->categories()->where('category_id', $categoria->id)->exists()) {
+                $livro->categories()->attach($categoria->id);
             }
 
             $importados++;

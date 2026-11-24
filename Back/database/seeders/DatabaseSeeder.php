@@ -2,10 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\Autor;
-use App\Models\Categoria;
-use App\Models\Emprestimo;
-use App\Models\Livro;
+use App\Models\Author;
+use App\Models\Book;
+use App\Models\Category;
+use App\Models\Loan;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -26,69 +26,69 @@ class DatabaseSeeder extends Seeder
         );
 
         // 2. Categorias
-        $catEngenharia = Categoria::firstOrCreate(['name' => 'Engenharia de Software'], [
+        $catEngenharia = Category::firstOrCreate(['name' => 'Engenharia de Software'], [
             'description' => 'Livros sobre arquitetura, padrões de projeto e boas práticas.',
         ]);
-        $catRedes = Categoria::firstOrCreate(['name' => 'Redes & Infraestrutura'], [
+        $catRedes = Category::firstOrCreate(['name' => 'Redes & Infraestrutura'], [
             'description' => 'Protocolos, sistemas operacionais e arquitetura de redes.',
         ]);
-        $catLiteratura = Categoria::firstOrCreate(['name' => 'Literatura Brasileira'], [
+        $catLiteratura = Category::firstOrCreate(['name' => 'Literatura Brasileira'], [
             'description' => 'Grandes clássicos da literatura e ficção nacional.',
         ]);
-        $catFiccao = Categoria::firstOrCreate(['name' => 'Ficção Científica & Distopia'], [
+        $catFiccao = Category::firstOrCreate(['name' => 'Ficção Científica & Distopia'], [
             'description' => 'Obras de ficção, futuros distópicos e universos fantásticos.',
         ]);
-        $catFantasia = Categoria::firstOrCreate(['name' => 'Fantasia & Aventura'], [
+        $catFantasia = Category::firstOrCreate(['name' => 'Fantasia & Aventura'], [
             'description' => 'Sagas clássicas de magia, fantasia e mundos épicos.',
         ]);
-        $catSuspense = Categoria::firstOrCreate(['name' => 'Suspense & Mistério'], [
+        $catSuspense = Category::firstOrCreate(['name' => 'Suspense & Mistério'], [
             'description' => 'Livros de investigação, suspense psicológico e crimes.',
         ]);
-        $catHistoria = Categoria::firstOrCreate(['name' => 'História & Filosofia'], [
+        $catHistoria = Category::firstOrCreate(['name' => 'História & Filosofia'], [
             'description' => 'Ensaios históricos, desenvolvimento humano e filosofia.',
         ]);
 
         // 3. Autores
-        $autorUncleBob = Autor::firstOrCreate(['name' => 'Robert C. Martin (Uncle Bob)'], [
+        $autorUncleBob = Author::firstOrCreate(['name' => 'Robert C. Martin (Uncle Bob)'], [
             'biography' => 'Engenheiro de software e autor lendário, um dos signatários do Manifesto Ágil.',
         ]);
-        $autorFowler = Autor::firstOrCreate(['name' => 'Martin Fowler'], [
+        $autorFowler = Author::firstOrCreate(['name' => 'Martin Fowler'], [
             'biography' => 'Especialista em refatoração e arquitetura corporativa na ThoughtWorks.',
         ]);
-        $autorTanenbaum = Autor::firstOrCreate(['name' => 'Andrew S. Tanenbaum'], [
+        $autorTanenbaum = Author::firstOrCreate(['name' => 'Andrew S. Tanenbaum'], [
             'biography' => 'Professor emérito de Ciência da Computação e autor de manuais de referência.',
         ]);
-        $autorMachado = Autor::firstOrCreate(['name' => 'Machado de Assis'], [
+        $autorMachado = Author::firstOrCreate(['name' => 'Machado de Assis'], [
             'biography' => 'Um dos maiores nomes da literatura brasileira e fundador da ABL.',
         ]);
-        $autorOrwell = Autor::firstOrCreate(['name' => 'George Orwell'], [
+        $autorOrwell = Author::firstOrCreate(['name' => 'George Orwell'], [
             'biography' => 'Escritor e jornalista britânico célebre por suas críticas ao totalitarismo.',
         ]);
-        $autorRowling = Autor::firstOrCreate(['name' => 'J. K. Rowling'], [
+        $autorRowling = Author::firstOrCreate(['name' => 'J. K. Rowling'], [
             'biography' => 'Escritora britânica criadora da mundialmente aclamada saga de Harry Potter.',
         ]);
-        $autorTolkien = Autor::firstOrCreate(['name' => 'J. R. R. Tolkien'], [
+        $autorTolkien = Author::firstOrCreate(['name' => 'J. R. R. Tolkien'], [
             'biography' => 'Filólogo e professor britânico, autor de O Hobbit e O Senhor dos Anéis.',
         ]);
-        $autorExupery = Autor::firstOrCreate(['name' => 'Antoine de Saint-Exupéry'], [
+        $autorExupery = Author::firstOrCreate(['name' => 'Antoine de Saint-Exupéry'], [
             'biography' => 'Escritor e ilustrador francês, mundialmente conhecido por O Pequeno Príncipe.',
         ]);
-        $autorMontes = Autor::firstOrCreate(['name' => 'Raphael Montes'], [
+        $autorMontes = Author::firstOrCreate(['name' => 'Raphael Montes'], [
             'biography' => 'Escritor e roteirista brasileiro consagrado de literatura policial e suspense.',
         ]);
-        $autorSaramago = Autor::firstOrCreate(['name' => 'José Saramago'], [
+        $autorSaramago = Author::firstOrCreate(['name' => 'José Saramago'], [
             'biography' => 'Escritor português vencedor do Prêmio Nobel de Literatura de 1998.',
         ]);
-        $autorClarice = Autor::firstOrCreate(['name' => 'Clarice Lispector'], [
+        $autorClarice = Author::firstOrCreate(['name' => 'Clarice Lispector'], [
             'biography' => 'Uma das mais influentes escritoras brasileiras do século XX.',
         ]);
-        $autorHarari = Autor::firstOrCreate(['name' => 'Yuval Noah Harari'], [
+        $autorHarari = Author::firstOrCreate(['name' => 'Yuval Noah Harari'], [
             'biography' => 'Historiador e professor israelense, autor de best-sellers globais sobre a humanidade.',
         ]);
-        $autorHerbert = Autor::firstOrCreate(['name' => 'Frank Herbert'], [
+        $autorHerbert = Author::firstOrCreate(['name' => 'Frank Herbert'], [
             'biography' => 'Autor americano da aclamada e monumental saga de ficção científica Duna.',
         ]);
-        $autorHunt = Autor::firstOrCreate(['name' => 'Andrew Hunt & David Thomas'], [
+        $autorHunt = Author::firstOrCreate(['name' => 'Andrew Hunt & David Thomas'], [
             'biography' => 'Autores do clássico O Programador Pragmático e pioneiros em desenvolvimento ágil.',
         ]);
 
@@ -271,11 +271,11 @@ class DatabaseSeeder extends Seeder
             $cat = $d['categoria'];
             unset($d['categoria']);
 
-            $livro = Livro::updateOrCreate(
+            $livro = Book::updateOrCreate(
                 ['isbn' => $d['isbn']],
                 $d
             );
-            $livro->categorias()->syncWithoutDetaching([$cat->id]);
+            $livro->categories()->syncWithoutDetaching([$cat->id]);
         }
 
         // 5. Leitores Acadêmicos
@@ -313,12 +313,12 @@ class DatabaseSeeder extends Seeder
         );
 
         // 6. Empréstimos Iniciais
-        if (Emprestimo::count() === 0) {
-            $livroClean = Livro::where('isbn', '9788576082675')->first();
-            $livroDom = Livro::where('isbn', '9788594318602')->first();
+        if (Loan::count() === 0) {
+            $livroClean = Book::where('isbn', '9788576082675')->first();
+            $livroDom = Book::where('isbn', '9788594318602')->first();
 
             if ($livroClean && $aluno1) {
-                Emprestimo::create([
+                Loan::create([
                     'book_id' => $livroClean->id,
                     'user_id' => $aluno1->id,
                     'loan_date' => now()->subDays(3)->toDateString(),
@@ -328,7 +328,7 @@ class DatabaseSeeder extends Seeder
             }
 
             if ($livroDom && $aluno2) {
-                Emprestimo::create([
+                Loan::create([
                     'book_id' => $livroDom->id,
                     'user_id' => $aluno2->id,
                     'loan_date' => now()->subDays(20)->toDateString(),

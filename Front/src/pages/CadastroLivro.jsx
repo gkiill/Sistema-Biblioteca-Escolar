@@ -208,16 +208,22 @@ function CadastroLivro() {
       payload.append("tags", JSON.stringify(tags));
       if (savedCover?.file) payload.append("cover", savedCover.file);
 
-      // TODO: troque pela chamada real ao seu back-end, por exemplo:
-      // const res = await fetch("/api/livros", { method: "POST", body: payload });
-      // if (!res.ok) throw new Error("Erro ao cadastrar");
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      const res = await fetch("/api/v1/livros", {
+        method: "POST",
+        headers: { Accept: "application/json" },
+        credentials: "include",
+        body: payload,
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || errData.erro || "Erro ao cadastrar");
+      }
 
       setStatus("success");
     } catch (err) {
       console.error(err);
       setStatus(null);
-      alert("Não foi possível cadastrar o livro. Tente novamente.");
+      alert(err.message || "Não foi possível cadastrar o livro. Tente novamente.");
     }
   };
 
