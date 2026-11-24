@@ -85,7 +85,7 @@ function normalizarEmprestimo(e, hoje) {
     id: e.id,
     isbn: livro.isbn ?? e.isbn ?? e.livro_isbn ?? e.livro_id,
     titulo: livro.titulo ?? e.titulo ?? "Livro sem título",
-    autor: livro.autor?.nome ?? livro.autor ?? e.autor ?? "",
+    autor: livro.author?.name ?? livro.author ?? e.author ?? "",
     capa: livro.capa_url ?? livro.capa ?? e.capa_url ?? e.capa ?? null,
     retirada,
     devolucao,

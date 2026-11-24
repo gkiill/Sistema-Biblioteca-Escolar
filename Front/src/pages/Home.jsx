@@ -7,42 +7,42 @@ import LivroCard from "../components/LivroCard";
 const LIVROS_RECOMENDADOS = [
   {
     id: "harry-potter",
+    isbn: "9780747546243",
     titulo: "Harry Potter e o Cálice de fogo",
     autor: "J.K Rowling",
     status: "emprestado", // 'disponivel' ou 'emprestado'
-    capa: "https://m.media-amazon.com/images/I/81S88mY0eaL._AC_UF1000,1000_QL80_.jpg",
     tags: ["Ficção"],
   },
   {
     id: "ux-design",
+    isbn: "9780134685991",
     titulo: "UX Design",
     autor: "Will Grant",
     status: "disponivel",
-    capa: "https://m.media-amazon.com/images/I/6113p03+Y6L._AC_UF1000,1000_QL80_.jpg",
     tags: ["Design", "UX", "Acadêmico"],
   },
   {
     id: "um-de-nos-esta-mentindo",
+    isbn: "9788501112521",
     titulo: "Um de nós está mentindo",
     autor: "Karen McManus",
     status: "disponivel",
-    capa: "https://m.media-amazon.com/images/I/71N15Eit3ML._AC_UF1000,1000_QL80_.jpg",
     tags: ["Mistério", "Suspense"],
   },
   {
     id: "logica-programacao",
+    isbn: "9788575223450",
     titulo: "Lógica de programação...",
     autor: "Raphael R",
     status: "disponivel",
-    capa: "https://m.media-amazon.com/images/I/71+y-f3IOfL._AC_UF1000,1000_QL80_.jpg",
     tags: ["Design", "UX", "Acadêmico"],
   },
   {
     id: "manual-de-assassinato",
+    isbn: "9788551000000",
     titulo: "Manual de assassinato...",
     autor: "Holly Jackson",
     status: "emprestado",
-    capa: "https://m.media-amazon.com/images/I/81180N97m0L._AC_UF1000,1000_QL80_.jpg",
     tags: ["Ficção"],
   },
 ];
